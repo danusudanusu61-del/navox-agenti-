@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#09090b"><title>NAVOX AI — Agent</title>
+<style>
+:root{--bg:#080809;--panel:#101012;--card:#171719;--line:#29292d;--text:#f7f7f8;--muted:#a0a0a8;--soft:#6f6f78}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}body{overflow:hidden}.app{height:100dvh;display:flex;background:radial-gradient(ellipse at 58% 38%,#171719 0%,#0a0a0b 46%,#070708 100%)}
+.sidebar{width:258px;flex-shrink:0;background:rgba(13,13,15,.92);border-right:1px solid #202024;padding:18px 14px;display:flex;flex-direction:column;z-index:4}.brand{display:flex;align-items:center;gap:10px;padding:8px 9px 25px;font-size:16px;letter-spacing:.13em;font-weight:750}.brand-mark{width:27px;height:27px;border:1px solid #626269;border-radius:50%;display:grid;place-items:center;position:relative}.brand-mark:before,.brand-mark:after{content:"";position:absolute;width:13px;height:19px;border:1.4px solid #eee;border-radius:50%;transform:rotate(42deg)}.brand-mark:after{transform:rotate(-42deg)}button{font:inherit;cursor:pointer}.newchat{width:100%;padding:13px 14px;text-align:left;border:1px solid #333338;border-radius:13px;background:#18181b;color:#f4f4f5;font-size:13px}.newchat:hover,.navbutton:hover{background:#222225}.nav{display:grid;gap:5px;margin-top:22px}.navbutton{display:flex;align-items:center;gap:11px;border:0;background:transparent;color:#aaaab2;padding:12px;border-radius:10px;text-align:left;font-size:13px}.navbutton .ico{width:18px;text-align:center;color:#d6d6da;font-size:17px}.side-bottom{margin-top:auto;padding:13px 10px;color:#8e8e98;font-size:11px;line-height:1.7}.main{min-width:0;flex:1;display:flex;flex-direction:column;position:relative}.topbar{height:64px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 25px;border-bottom:1px solid rgba(255,255,255,.055);font-size:13px;color:#c9c9cf}.top-left{display:flex;align-items:center;gap:10px}.status-dot{width:6px;height:6px;border-radius:50%;background:#e9e9ed;box-shadow:0 0 12px #fff8}.top-actions{display:flex;align-items:center;gap:8px}.top-pill{border:1px solid #303034;border-radius:30px;padding:8px 12px;color:#bcbcc3;font-size:11px;background:#111113}.mobile-brand{display:none}.chat{flex:1;overflow-y:auto;padding:22px 20px 24px;scroll-behavior:smooth}.content{width:min(790px,100%);margin:0 auto}.welcome{text-align:center;padding:clamp(18px,5vh,55px) 0 25px}.orb-wrap{height:175px;display:grid;place-items:center;margin:0 auto 13px;position:relative}.orb-halo{position:absolute;width:180px;height:150px;border-radius:50%;background:radial-gradient(ellipse,rgba(190,194,205,.14),rgba(100,103,115,.04) 46%,transparent 70%);filter:blur(12px)}.orb{width:118px;height:118px;border-radius:50%;position:relative;overflow:hidden;background:radial-gradient(ellipse at 31% 23%,#fff 0%,#cfd2d7 8%,#656a72 16%,#16181d 31%,#aeb3bc 42%,#262a31 52%,#e5e7eb 61%,#484d55 72%,#101114 86%);box-shadow:inset -10px -13px 20px #000b,inset 6px 7px 17px #fff8,0 0 38px #b7bbc514;animation:float 5s ease-in-out infinite}.orb:before{content:"";position:absolute;inset:10px 6px;border-radius:47% 53% 55% 45%;background:conic-gradient(from 25deg,transparent,#f8f8f9 9%,#33363e 18%,#d9dce2 26%,transparent 34%,#111318 45%,#dfe1e6 55%,#535862 67%,transparent 79%,#f5f6f8 88%,transparent);filter:blur(3px);transform:rotate(-25deg);mix-blend-mode:screen}.orb:after{content:"";position:absolute;inset:29px 23px;border-radius:50%;background:radial-gradient(ellipse at 30% 25%,#121317 0%,#08090b 36%,#656a73 54%,#dfe1e5 59%,#24262c 66%,#08090b 75%);box-shadow:0 0 18px #000;transform:rotate(30deg)}@keyframes float{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-7px) rotate(4deg)}}.welcome h1{font-size:clamp(25px,3vw,36px);font-weight:500;letter-spacing:-.045em;margin:6px 0 10px}.welcome p{font-size:13px;line-height:1.6;color:#a1a1aa;margin:0 auto;max-width:420px}.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:25px auto 20px;max-width:550px;text-align:left}.feature{min-height:85px;border:1px solid #29292e;border-radius:15px;background:linear-gradient(145deg,#1a1a1d,#121214);color:#f2f2f4;padding:14px;display:flex;align-items:flex-start;gap:12px;transition:transform .18s,border-color .18s}.feature:hover{transform:translateY(-2px);border-color:#5b5b63}.feature-icon{width:29px;height:29px;flex-shrink:0;border:1px solid #3a3a40;background:#222226;border-radius:9px;display:grid;place-items:center;color:#dedee3;font-size:15px}.feature strong{display:block;font-size:12px;font-weight:600;margin:2px 0 5px}.feature small{display:block;color:#9a9aa3;font-size:11px;line-height:1.4}.feature .arrow{margin-left:auto;color:#aaaab2;font-size:17px}.suggestions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0 16px}.suggestion{border:1px solid #29292e;border-radius:30px;padding:9px 12px;background:#111113;color:#bdbdc5;font-size:11px}.open-btn{display:inline-block;margin-top:9px;padding:7px 14px;border-radius:20px;background:#f1f1f3;color:#111;font-size:12px;font-weight:600;text-decoration:none}.open-btn:hover{background:#d7d7db}button.top-pill{cursor:pointer;font:inherit;font-size:11px}.suggestion:hover{background:#222225;color:#fff}.message{display:flex;gap:12px;margin:24px 0;align-items:flex-start;animation:appear .2s ease}@keyframes appear{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}.avatar{width:31px;height:31px;min-width:31px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;border:1px solid #3a3a40;background:#17171a;color:#eee}.agent .avatar{background:#eee;color:#111;border-color:#eee}.bubble{padding:5px 0;max-width:calc(100% - 45px);font-size:14px;line-height:1.65;word-break:break-word;color:#ededf0}.user .bubble{background:#1a1a1d;border:1px solid #303035;padding:11px 14px;border-radius:15px}.meta{font-size:11px;color:#888891;margin-top:7px;letter-spacing:.02em}.composer-area{flex-shrink:0;padding:10px 20px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(transparent,#09090a 24%)}.composer{max-width:790px;margin:auto;display:flex;align-items:center;gap:9px;border:1px solid #3a3a40;background:rgba(24,24,27,.96);padding:7px;border-radius:18px;box-shadow:0 8px 35px #0005}.icon-btn{width:42px;height:42px;flex-shrink:0;border:0;border-radius:13px;background:#29292e;color:#f4f4f5;display:grid;place-items:center}.icon-btn.active{background:#f4f4f5;color:#111}.input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;padding:11px 3px;font-size:14px}.input::placeholder{color:#8e8e98}.send{width:42px;height:42px;border:0;border-radius:13px;background:#f1f1f3;color:#111;font-size:21px;font-weight:500;display:grid;place-items:center}.send:hover{background:#d7d7db}.status{max-width:790px;margin:8px auto 0;text-align:center;font-size:11px;color:#8e8e98;min-height:13px}.menu-btn{display:none;border:1px solid #303034;border-radius:10px;background:#171719;color:#eee;padding:7px 10px}
+@media(max-width:760px){.sidebar{position:fixed;left:-270px;top:0;bottom:0;transition:left .25s;box-shadow:15px 0 50px #0008}.sidebar.open{left:0}.mobile-brand{display:inline;font-weight:700;letter-spacing:.08em}.topbar{height:57px;padding:0 14px}.menu-btn{display:block}.top-pill{padding:7px 9px}.chat{padding:12px 15px 15px}.welcome{padding:2vh 0 16px}.orb-wrap{height:142px;margin-bottom:4px}.orb{width:102px;height:102px}.orb-halo{width:150px;height:125px}.welcome h1{font-size:28px}.welcome p{font-size:12px;padding:0 12px}.feature-grid{gap:8px;margin:21px auto 15px}.feature{padding:12px;min-height:83px;gap:9px;border-radius:13px}.feature-icon{width:26px;height:26px}.feature strong{font-size:12px}.feature small{font-size:11px}.suggestions{gap:6px}.suggestion{font-size:11px;padding:8px 10px}.composer-area{padding:8px 12px calc(10px + env(safe-area-inset-bottom))}.composer{border-radius:17px;gap:6px}.icon-btn,.send{width:39px;height:39px;border-radius:12px}.input{font-size:13px}.status{font-size:11px}.top-actions{gap:5px}}
+@media(max-width:360px){.feature{padding:10px 8px}.feature small{display:none}.feature-grid{gap:7px}.orb-wrap{height:125px}.orb{width:92px;height:92px}.welcome h1{font-size:25px}}
+</style></head>
+<body><div class="app">
+<aside class="sidebar" id="sidebar"><div class="brand"><span class="brand-mark"></span><span>NAVOX AI</span></div><button class="newchat" onclick="newChat()">＋ &nbsp; New conversation</button><div class="nav"><button class="navbutton" onclick="focusInput()"><span class="ico">⌕</span>Search the web</button><button class="navbutton" onclick="fillCommand('Open YouTube')"><span class="ico">▣</span>Quick actions</button><button class="navbutton" onclick="showInfo()"><span class="ico">◌</span>About NAVOX</button><button class="navbutton" onclick="setKey()"><span class="ico">✦</span>AI settings</button></div><div class="side-bottom">NAVOX AI AGENT<br>Understand · Act · Open<br><span style="color:#55555d">Chrome Edition · Preview</span></div></aside>
+<main class="main"><header class="topbar"><div class="top-left"><button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button><span class="mobile-brand">NAVOX</span><span class="status-dot"></span><span>AI Agent <span style="color:#73737c">/ Ready</span></span></div><div class="top-actions"><button class="top-pill" id="langBtn" title="Voice language" aria-label="Voice language">EN</button><span class="top-pill">PREVIEW</span></div></header>
+<section class="chat" id="chat"><div class="content" id="messages"><div class="welcome" id="welcome"><div class="orb-wrap"><div class="orb-halo"></div><div class="orb"></div></div><h1>Good to see you.</h1><p>I'm NAVOX. What can I help you with today?</p>
+<div class="feature-grid"><button class="feature" onclick="fillCommand('Search latest AI news')"><span class="feature-icon">⌕</span><span><strong>Web Search</strong><small>Find answers across the web</small></span><span class="arrow">↗</span></button><button class="feature" onclick="startVoice()"><span class="feature-icon">♩</span><span><strong>Voice Control</strong><small>Speak a command to NAVOX</small></span><span class="arrow">↗</span></button><button class="feature" onclick="fillCommand('Search how to build an AI agent')"><span class="feature-icon">▤</span><span><strong>Learn & Explore</strong><small>Discover ideas and explanations</small></span><span class="arrow">↗</span></button><button class="feature" onclick="fillCommand('Open Instagram')"><span class="feature-icon">◎</span><span><strong>Quick Actions</strong><small>Open any app</small></span><span class="arrow">↗</span></button></div>
+<div class="suggestions"><button class="suggestion" onclick="fillCommand('Open YouTube')">Open YouTube ↗</button><button class="suggestion" onclick="fillCommand('Open Instagram')">Open Instagram ↗</button><button class="suggestion" onclick="fillCommand('Search AI tools')">Explore AI tools ↗</button></div></div></div></section>
+<div class="composer-area"><div class="composer"><button class="icon-btn" id="mic" title="Voice command" aria-label="Voice command"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="8.5" y="3" width="7" height="12" rx="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><input class="input" id="input" placeholder="Message NAVOX..." autocomplete="off"><button class="send" id="send" aria-label="Send">↑</button></div><div class="status" id="status">Ready when you are · Enter to send</div></div></main></div>
+<script>
+const $=id=>document.getElementById(id);
+const input=$('input'),messages=$('messages'),status=$('status'),mic=$('mic'),chat=$('chat'),sidebar=$('sidebar');
+const NAT=window.NAVOX,WELCOME=messages.innerHTML,MIC_SVG=mic.innerHTML,isAndroid=!NAT&&/Android/i.test(navigator.userAgent);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+let lang=store.get('nvx_lang')||'en-IN',rec=null,history=[];
+try{history=JSON.parse(store.get('nvx_hist')||'[]')}catch(e){}
+const G=q=>'https://www.google.com/search?q='+q;
+const P=(pkg,alias,home,q)=>({pkg,alias,home,q});
+const APPS={
+youtube:P('com.google.android.youtube',['youtube','you tube','యూట్యూబ్'],'https://www.youtube.com/',q=>'https://www.youtube.com/results?search_query='+q),
+instagram:P('com.instagram.android',['instagram','insta','ఇన్‌స్టాగ్రామ్','ఇన్స్టాగ్రామ్'],'https://www.instagram.com/',q=>G('site%3Ainstagram.com+'+q)),
+whatsapp:P('com.whatsapp',['whatsapp','whats app','వాట్సాప్'],'https://web.whatsapp.com/'),
+telegram:P('org.telegram.messenger',['telegram','టెలిగ్రామ్'],'https://web.telegram.org/'),
+facebook:P('com.facebook.katana',['facebook','fb','ఫేస్బుక్'],'https://www.facebook.com/',q=>'https://www.facebook.com/search/top?q='+q),
+twitter:P('com.twitter.android',['twitter','ట్విట్టర్'],'https://x.com/',q=>'https://x.com/search?q='+q),
+snapchat:P('com.snapchat.android',['snapchat','snap'],'https://www.snapchat.com/'),
+linkedin:P('com.linkedin.android',['linkedin'],'https://www.linkedin.com/',q=>'https://www.linkedin.com/search/results/all/?keywords='+q),
+reddit:P('com.reddit.frontpage',['reddit'],'https://www.reddit.com/',q=>'https://www.reddit.com/search/?q='+q),
+pinterest:P('com.pinterest',['pinterest'],'https://www.pinterest.com/',q=>'https://www.pinterest.com/search/pins/?q='+q),
+spotify:P('com.spotify.music',['spotify','స్పాటిఫై'],'https://open.spotify.com/',q=>'https://open.spotify.com/search/'+q),
+netflix:P('com.netflix.mediaclient',['netflix','నెట్‌ఫ్లిక్స్'],'https://www.netflix.com/',q=>'https://www.netflix.com/search?q='+q),
+hotstar:P('in.startv.hotstar',['hotstar','jiohotstar','jio hotstar'],'https://www.hotstar.com/'),
+primevideo:P('com.amazon.avod.thirdpartyclient',['prime video','primevideo','prime'],'https://www.primevideo.com/'),
+amazon:P('in.amazon.mShop.android.shopping',['amazon','అమెజాన్'],'https://www.amazon.in/',q=>'https://www.amazon.in/s?k='+q),
+flipkart:P('com.flipkart.android',['flipkart','ఫ్లిప్‌కార్ట్'],'https://www.flipkart.com/',q=>'https://www.flipkart.com/search?q='+q),
+swiggy:P('in.swiggy.android',['swiggy','స్విగ్గీ'],'https://www.swiggy.com/',q=>'https://www.swiggy.com/search?query='+q),
+zomato:P('com.application.zomato',['zomato','జొమాటో'],'https://www.zomato.com/'),
+uber:P('com.ubercab',['uber'],'https://m.uber.com/'),
+ola:P('com.olacabs.customer',['ola'],'https://www.olacabs.com/'),
+phonepe:P('com.phonepe.app',['phonepe','phone pe','ఫోన్‌పే'],'https://www.phonepe.com/'),
+gpay:P('com.google.android.apps.nbu.paisa.user',['gpay','google pay','g pay'],'https://pay.google.com/'),
+paytm:P('net.one97.paytm',['paytm','పేటీఎం'],'https://paytm.com/'),
+maps:P('com.google.android.apps.maps',['maps','google maps','map','మ్యాప్స్'],'https://www.google.com/maps',q=>'https://www.google.com/maps/search/'+q),
+photos:P('com.google.android.apps.photos',['photos','google photos'],'https://photos.google.com/'),
+drive:P('com.google.android.apps.docs',['drive','google drive'],'https://drive.google.com/'),
+meet:P('com.google.android.apps.tachyon',['meet','google meet'],'https://meet.google.com/'),
+zoom:P('us.zoom.videomeetings',['zoom'],'https://zoom.us/'),
+translate:P('com.google.android.apps.translate',['translate','google translate'],'https://translate.google.com/'),
+chatgpt:P('com.openai.chatgpt',['chatgpt','chat gpt'],'https://chatgpt.com/',q=>'https://chatgpt.com/?q='+q),
+gmail:P('com.google.android.gm',['gmail','జీమెయిల్'],'https://mail.google.com/',q=>'https://mail.google.com/mail/u/0/#search/'+q),
+chrome:P('',['chrome','క్రోమ్'],'https://www.google.com/',G)};
+function launch(pkg,fb){return'intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package='+pkg+';S.browser_fallback_url='+encodeURIComponent(fb)+';end'}
+function link(url,pkg){if(!isAndroid||!pkg)return url;const u=new URL(url);if(u.hash)return url;return'intent://'+u.host+u.pathname+u.search+'#Intent;scheme=https;package='+pkg+';S.browser_fallback_url='+encodeURIComponent(url)+';end'}
+function save(){store.set('nvx_hist',JSON.stringify(history.slice(-60)))}
+function addMessage(text,type,meta='',url='',persist=true){
+document.getElementById('welcome')?.remove();
+const row=document.createElement('div');row.className='message '+type;
+const av=document.createElement('div');av.className='avatar';av.textContent=type==='user'?'YOU':'N';
+const b=document.createElement('div');b.className='bubble';b.textContent=text;
+if(url){const a=document.createElement('a');a.className='open-btn';a.href=url;a.target='_blank';a.rel='noopener';a.textContent='Open ↗';b.appendChild(a)}
+if(meta){const m=document.createElement('div');m.className='meta';m.textContent=meta;b.appendChild(m)}
+row.append(av,b);messages.appendChild(row);chat.scrollTop=chat.scrollHeight;
+if(persist){history.push({text,type,meta,url});save()}}
+function speak(t){if(!t||!('speechSynthesis'in window))return;speechSynthesis.cancel();const v=new SpeechSynthesisUtterance(t);v.lang=lang;v.rate=.95;speechSynthesis.speak(v)}
+const findApp=c=>{const p=' '+c+' ';return Object.keys(APPS).find(k=>APPS[k].alias.some(a=>p.includes(' '+a+' ')||p.includes(' '+a+'లో ')))};
+const VERB=/^(open|launch|start|install|update)\s|ఓపెన్|play ?store/;
+let installed=[];try{if(NAT)installed=JSON.parse(NAT.getApps()).map(a=>({n:a.n.toLowerCase(),l:a.n,p:a.p})).filter(a=>a.n.length>1).sort((x,y)=>y.n.length-x.n.length)}catch(e){}
+const findInstalled=c=>{const p=' '+c+' ';return installed.find(a=>p.includes(' '+a.n+' '))};
+const FILL=new Set(['start','open','launch','and','app','website','please','on','in','lo','ni','cheyyi','cheyyandi','cheyyu','chey','ఓపెన్','చేయి','చెయ్యి','లో','ని']);
+const SK=['search','find','వెతుకు','వెతకండి','సెర్చ్'];
+function detectCommand(raw){
+const c=raw.toLowerCase().replace(/[.,!?]/g,'').trim();
+if(/^(open|launch)\s+google$/.test(c))return{action:'open',app:'chrome',query:''};
+let name=findApp(c);
+if(name){const al=APPS[name].alias;if(!(VERB.test(c)||al.some(a=>c.startsWith(a))||/\s(lo|in|on|and)\s/.test(c)))name=null}
+if(name){
+if(APPS[name].pkg&&/play ?store|install|update|ఇన్‌స్టాల్/.test(c))return{action:'store',app:name};
+let rest=c;APPS[name].alias.forEach(a=>{rest=rest.split(a).join(' ')});
+return{action:'open',app:name,query:rest.split(/\s+/).filter(w=>w&&!FILL.has(w)&&!SK.includes(w)).join(' ')}}
+if(VERB.test(c)){const a=findInstalled(c);if(a)return{action:'open',pkg:a.p,label:a.l,query:''}}
+const g=c.match(/^(open|launch|start)\s+(.+)$/);if(g&&!/\s(and|lo|in)\s+search/.test(c))return{action:'store',app:'',query:g[2]};
+return{action:'search',query:raw.trim().replace(/^(search|find)\s+(for\s+)?/i,'')||raw.trim()}}
+const SYS='You are NAVOX, a concise assistant inside a browser app. Understand English, Telugu and Tanglish (Telugu in English letters). Reply ONLY with JSON: {"action":"chat|open|search|store","app":"'+Object.keys(APPS).join('|')+'|","query":"","reply":"short reply in the user\'s language"}. chat = answer directly in reply. open = open app, optional query to search inside it. search = Google search. store = Play Store page of app. If the app is not in the list, use action store with query = the app name.';
+async function askAI(raw){
+const msgs=history.filter(h=>h.type==='user'||h.meta.startsWith('AI')||h.meta.startsWith('Action')).slice(-8).map(h=>({role:h.type==='user'?'user':'assistant',content:h.text}));
+const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':store.get('nvx_key'),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-5-5',max_tokens:600,system:SYS,messages:msgs.concat([{role:'user',content:raw}]).filter((m,i,a)=>i===0||m.role!==a[i-1].role)})});
+const d=await r.json();if(!r.ok)throw new Error(d.error?.message||r.status);
+const t=(d.content||[]).map(x=>x.text||'').join('').replace(/```json|```/g,'').trim();
+try{return JSON.parse(t)}catch(e){return{action:'chat',reply:t}}}
+function act(c){
+const A=APPS[c.app];let url,label,reply=c.reply;
+if(NAT&&c.action==='open'&&!c.query){const pkg=c.pkg||(A&&A.pkg);if(pkg&&NAT.launch(pkg)){const n=c.label||c.app,m=reply||'Opening '+n+'.';addMessage(m,'agent','Action · '+n);speak(m);status.textContent='Opened '+n+' ✓';return}}
+if(c.pkg&&!A)c={action:'store',app:'',query:c.label};
+if(c.action==='chat'){addMessage(reply||'…','agent','AI reply');speak(reply);status.textContent='Ready when you are · Enter to send';return}
+if(c.action==='store'&&A&&A.pkg){url='https://play.google.com/store/apps/details?id='+A.pkg;label='Play Store';reply=reply||'Opening '+c.app+' on Play Store.'}
+else if(c.action==='store'||(c.action==='open'&&c.app&&!A)){const n=c.query||c.app;url='https://play.google.com/store/search?q='+encodeURIComponent(n)+'&c=apps';label='Play Store';reply=reply||'I can\'t launch '+n+' directly, so I\'m opening it in Play Store — tap Open there.'}
+else if(c.action==='open'&&A){const qf=A.q||(x=>G(encodeURIComponent(c.app+' ')+x));url=(!c.query&&isAndroid&&A.pkg)?launch(A.pkg,A.home):link(c.query?qf(encodeURIComponent(c.query)):A.home,A.pkg);label=c.app;reply=reply||(c.query?'Opening '+c.app+' and searching '+c.query+'.':'Opening '+c.app+'.')}
+else{const q=c.query||'';url=G(encodeURIComponent(q));label='Google search';reply=reply||'Searching the web for '+q+'.'}
+addMessage(reply,'agent','Action · '+label,url);speak(reply);
+const w=NAT?NAT.openUrl(url,(A&&A.pkg)||''):window.open(url,'_blank');status.textContent=w?'Opened '+label+' ✓':'Tap Open to continue'}
+async function runCommand(){
+const raw=input.value.trim();if(!raw)return;input.value='';addMessage(raw,'user');status.textContent='Understanding your request…';
+let cmd=null;
+if(store.get('nvx_key')){try{cmd=await askAI(raw)}catch(e){addMessage('AI error: '+e.message+' — using basic mode.','agent','System')}}
+act(cmd||detectCommand(raw))}
+function fillCommand(t){input.value=t;input.focus();sidebar.classList.remove('open')}
+function focusInput(){input.focus();sidebar.classList.remove('open')}
+function newChat(){history=[];save();messages.innerHTML=WELCOME;status.textContent='Ready when you are · Enter to send';sidebar.classList.remove('open');input.focus()}
+function showInfo(){addMessage('NAVOX AI is a browser-based agent preview. With an API key it understands natural language (English/Telugu); without one it uses basic commands. It opens websites and Android apps, and runs web searches.','agent','About NAVOX');sidebar.classList.remove('open')}
+function setKey(){const k=prompt('Paste your Anthropic API key to enable AI mode (saved only on this device). Leave empty to remove it:','');if(k===null)return;sidebar.classList.remove('open');if(k.trim()){store.set('nvx_key',k.trim());addMessage('AI mode enabled.','agent','System')}else{store.del('nvx_key');addMessage('AI mode off. Basic commands only.','agent','System')}}
+function startVoice(){
+if(NAT){status.textContent='Listening…';NAT.listen(lang);return}
+if(rec){rec.stop();return}
+const S=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!S){addMessage('Voice recognition is not available in this browser. Try Chrome.','agent','System');return}
+const r=rec=new S();r.lang=lang;r.interimResults=false;
+r.onstart=()=>{mic.classList.add('active');mic.textContent='■';input.placeholder='Listening…';status.textContent='Listening… tap ■ to stop'};
+r.onresult=e=>{input.value=e.results[0][0].transcript;runCommand()};
+r.onerror=e=>{addMessage(e.error==='not-allowed'?'Microphone permission denied. Allow it in Chrome settings.':'I could not understand the voice command.','agent','System')};
+r.onend=()=>{rec=null;mic.classList.remove('active');mic.innerHTML=MIC_SVG;input.placeholder='Message NAVOX...'};
+try{r.start()}catch(e){rec=null}}
+function setLang(){$('langBtn').textContent=lang==='te-IN'?'తె':'EN'}
+$('langBtn').onclick=()=>{lang=lang==='te-IN'?'en-IN':'te-IN';store.set('nvx_lang',lang);setLang();status.textContent='Voice language: '+(lang==='te-IN'?'Telugu':'English')};
+setLang();
+$('send').onclick=runCommand;mic.onclick=startVoice;
+input.addEventListener('keydown',e=>{if(e.key==='Enter')runCommand()});
+$('menuBtn').onclick=()=>sidebar.classList.toggle('open');
+document.querySelector('.main').addEventListener('click',e=>{if(!e.target.closest('#menuBtn'))sidebar.classList.remove('open')});
+window.onNativeVoice=t=>{input.value=t;runCommand()};window.onNativeVoiceError=()=>{status.textContent='Could not hear you. Tap the mic and try again.'};
+history.forEach(h=>addMessage(h.text,h.type,h.meta,h.url,false));
+</script></body></html>
