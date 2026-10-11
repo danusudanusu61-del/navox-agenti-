@@ -197,7 +197,11 @@ if(name){
 if(APPS[name].pkg&&/play ?store|install|update|ఇన్‌స్టాల్/.test(c))return{action:'store',app:name};
 let rest=c;APPS[name].alias.forEach(a=>{rest=rest.split(a).join(' ')});
 const hasS=SK.some(w=>c.includes(w))||/\slo\s/.test(c);
-return{action:'open',app:name,query:hasS?rest.split(/\s+/).filter(w=>w&&!FILL.has(w)&&!SK.includes(w)).join(' '):''}}
+const qm=c.match(/(?:search|find|play|vetuku|vedhuku|chupinchu)\s+(?:for\s+|the\s+)?(.+)$/);
+let q=qm?qm[1].split(/\s+/).filter(w=>w&&!FILL.has(w)&&w!=='the').join(' '):'';
+if(!q&&hasS)q=rest.split(/\s+/).filter(w=>w&&!FILL.has(w)&&!SK.includes(w)&&w!=='the').join(' ');
+APPS[name].alias.forEach(a=>{q=q.split(a).join(' ')});
+return{action:'open',app:name,query:q.replace(/\s+(on|in)\s*$/,'').replace(/\s+/g,' ').trim()}}
 if(VERB.test(c)||OPENEND.test(c)){const a=findInstalled(c);if(a)return{action:'open',pkg:a.p,label:a.l,query:''}}
 const g=c.match(/^(open|launch|start)\s+(.+)$/);if(g&&!/\s(and|lo|in)\s+search/.test(c))return{action:'store',app:'',query:g[2]};
 return{action:'search',query:raw.trim().replace(/^(search|find)\s+(for\s+)?/i,'')||raw.trim()}}
@@ -240,6 +244,7 @@ if(/alarm|అలారం|wake me/.test(c)&&(m=c.match(/(\d{1,2})(?::(\d{2}))?\s
 const S={wifi:/wi-?fi|వైఫై/,bluetooth:/bluetooth|బ్లూటూత్/,location:/location settings|gps/,display:/brightness|display/,sound:/volume|sound settings/,airplane:/airplane|flight mode/,battery:/battery saver|battery settings/};
 if(c.split(/\s+/).length<=5&&!/(how|what|why|password)/.test(c))for(const k in S)if(S[k].test(c))return{action:'settings',which:k};
 if(/^(open |launch )?settings$/.test(c))return{action:'settings',which:'settings'};
+if((m=c.match(/^play\s+(.+?)\s+(?:on|in)\s+(?:youtube|you tube)$/)))return{action:'play',query:m[1],yt:true};
 if(!/play ?store/.test(c)&&((m=c.match(/^play\s+(.+)$/))||(m=c.match(/^(.+?)\s+play(?:\s+chey\w*)?$/))))return{action:'play',query:m[1]};
 if(m=r.match(/^(?:note down|save note|note|remember)\s*[:\-]?\s+(.+)$/i))return{action:'note',text:m[1]};
 if(/^(show |my |list )?notes$/.test(c))return{action:'notes'};
@@ -253,7 +258,7 @@ if(A==='notes'){const n=notes.get();return say(n.length?n.map((x,i)=>(i+1)+'. '+
 if(A==='note'){const n=notes.get();n.push(c.text);notes.set(n);return say('Saved note: '+c.text,'Notes')}
 if(A==='clearnotes'){notes.set([]);return say('All notes cleared.','Notes')}
 if(A==='time')return say(new Date().toLocaleString('en-IN',{dateStyle:'full',timeStyle:'short'}),'Time');
-if(A==='play'){if(NAT&&NAT.play(c.query))return say('Playing '+c.query+'.','Music');return act({action:'open',app:'youtube',query:c.query})}
+if(A==='play'){if(c.yt)return act({action:'open',app:'youtube',query:c.query});if(NAT&&NAT.play(c.query))return say('Playing '+c.query+'.','Music');return act({action:'open',app:'youtube',query:c.query})}
 if(!NAT){if(A==='call'){window.open('tel:'+c.num);return say('Opening dialer.')}if(A==='sms'){window.open('sms:'+c.num+'?body='+encodeURIComponent(c.body||''));return say('Opening messages.')}return say('This works only in the NAVOX Android app.','System')}
 let ok=false,m='';
 if(A==='torch'){ok=NAT.torch(c.on);m='Flashlight '+(c.on?'on':'off')+'.'}
@@ -263,12 +268,15 @@ else if(A==='alarm'){ok=NAT.alarm(c.h,c.mi,c.label);m='Alarm set for '+String(c.
 else if(A==='timer'){ok=NAT.timer(c.sec,c.label);m='Timer set for '+Math.round(c.sec/6)/10+' min'+(c.label!=='NAVOX'?' · '+c.label:'')+'.'}
 else if(A==='settings'){ok=NAT.settings(c.which);m='Opening '+c.which+' settings.'}
 say(ok?m:'Could not do that on this phone.','Action')}
+let aiBlock=0;
 async function runCommand(){
 const raw=input.value.trim();if(!raw)return;input.value='';addMessage(raw,'user');status.textContent='Understanding your request…';
 const nc=nativeCmd(raw);if(nc){doNative(nc);return}
+const dc=detectCommand(raw);
+const sure=dc.action==='open'||(dc.action==='store'&&dc.nf);
 let cmd=null;
-if(PROXY||store.get('nvx_key')){try{cmd=await askAI(raw)}catch(e){addMessage('AI error: '+e.message+' — using basic mode.','agent','System')}}
-act(cmd||detectCommand(raw))}
+if(!sure&&(PROXY||store.get('nvx_key'))&&Date.now()>aiBlock){try{cmd=await askAI(raw)}catch(e){const m=String(e.message||e);if(/quota|exceeded|rate|429/i.test(m)){aiBlock=Date.now()+3600000;addMessage('Gemini free limit reached for now. Basic commands still work.','agent','System')}else addMessage('AI error: '+m.slice(0,140)+' — using basic mode.','agent','System')}}
+act(cmd||dc)}
 function showListen(){$('listen').classList.add('show')}
 function hideListen(){$('listen').classList.remove('show')}
 function stopVoice(){if(rec)rec.stop();hideListen()}
