@@ -242,3 +242,81 @@ jobs:
           @media(max-height:660px){.hero{width:min(50vw,190px);margin-bottom:14px}.tag{font-size:13px}}
           </style></head>
           <body><div id="splash"><img alt="NAVOX AI Agent" src="data:image/jpeg;base64,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
+
+          <aside class="sidebar" id="sidebar"><div class="brand"><svg width="28" height="30" viewBox="1 0 22 24" aria-hidden="true"><defs><linearGradient id="nvg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00B8FF"/><stop offset="1" stop-color="#0A5CFF"/></linearGradient></defs><g fill="none" stroke="url(#nvg)" stroke-linejoin="round" stroke-linecap="round"><path d="M12 2L20.58 7.05V16.95L12 22L3.42 16.95V7.05Z" stroke-width=".9"/><path d="M7.13 8.46L16.82 15.76" stroke-width=".7"/></g><g fill="url(#nvg)"><circle cx="7.13" cy="8.46" r="1.3"/><circle cx="16.82" cy="8.46" r="1.3"/><circle cx="7.26" cy="15.76" r="1.3"/><circle cx="16.82" cy="15.76" r="1.3"/></g></svg><span>NAVOX</span></div><button class="newchat" onclick="newChat()">NEW CHAT</button><button class="navbutton" onclick="focusInput()"><small>01</small>Search the web</button><button class="navbutton" onclick="sidebar.classList.remove('open');runPreset('help')"><small>02</small>Quick actions</button><button class="navbutton" onclick="openSetup()"><small>03</small>Hey Nav setup</button><button class="navbutton" onclick="setKey()"><small>04</small>AI settings</button><button class="navbutton" onclick="showInfo()"><small>05</small>About NAVOX</button><div class="side-bottom">NAVOX AI AGENT<br>THINK. PLAN. ACT.</div></aside>
+          <main class="main"><header class="topbar"><button class="hb" id="menuBtn" aria-label="Menu"><i></i></button><span class="word">NAVOX</span><button class="lang" id="langBtn" aria-label="Voice language">EN</button></header>
+          <section class="chat" id="chat"><div class="content" id="messages"><div class="welcome" id="welcome">
+          <div class="hero"><svg viewBox="0 0 402 468" aria-hidden="true"><defs><linearGradient id="hg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="402" y2="468"><stop offset="0" stop-color="#00B8FF"/><stop offset="1" stop-color="#0A5CFF"/></linearGradient></defs><path class="hx" d="M201 0L402 118V350L201 468L0 350V118Z"/><line class="dgl" x1="87" y1="151" x2="314" y2="322"/></svg>
+          <button class="nd v" style="left:21.6%;top:32.3%" onclick="startVoice()" aria-label="VOICE"><b></b><span>VOICE</span></button><button class="nd " style="left:78.1%;top:32.3%" onclick="fillCommand('Search ')" aria-label="SEARCH"><b></b><span>SEARCH</span></button><button class="nd " style="left:22.4%;top:68.8%" onclick="runPreset('notes')" aria-label="NOTES"><b></b><span>NOTES</span></button><button class="nd " style="left:78.1%;top:68.8%" onclick="runPreset('help')" aria-label="ACTIONS"><b></b><span>ACTIONS</span></button></div>
+          <div class="tag">think. plan. act.</div><div class="rule"></div>
+          <p class="hint">Tap a node, say “Hey Nav”,<br>or type a command below.</p><div class="try"><button onclick="fillCommand('Open YouTube')">open youtube</button><em>/</em><button onclick="fillCommand('Flashlight on')">flashlight on</button><em>/</em><button onclick="fillCommand('Set alarm 7 am')">alarm 7 am</button><em>/</em><button onclick="fillCommand('Play Telugu songs')">play music</button><em>/</em><button onclick="fillCommand('help')">help</button></div></div></div></section>
+          <div class="composer-area"><div class="composer"><button class="icon-btn" id="mic" aria-label="Voice command"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><rect x="8.5" y="3" width="7" height="12" rx="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><input class="input" id="input" placeholder="Command or message…" autocomplete="off"><button class="send" id="send" aria-label="Send">↑</button></div><div class="status" id="status">READY · SAY “HEY NAV”</div></div></main></div>
+          <div class="listen" id="listen"><div class="l-top"><button class="lbtn" onclick="stopVoice()">‹ BACK</button><span class="l-title">NAVOX · VOICE</span><span class="sp"></span></div>
+          <div class="l-hex"><svg viewBox="-20 -20 442 508" aria-hidden="true"><path class="o" d="M201 0L402 118V350L201 468L0 350V118Z"/><path class="i" d="M201 65.5L345.7 150.5V317.5L201 402.5L56.3 317.5V150.5Z"/><line class="dg" x1="87" y1="151" x2="314" y2="322"/><circle class="n" cx="87" cy="151" r="15"/><circle class="n n2" cx="314" cy="151" r="15"/><circle class="n n3" cx="314" cy="322" r="15"/><circle class="n n4" cx="90" cy="322" r="15"/></svg></div>
+          <p class="l-text">Say a command, like “open WhatsApp”</p>
+          <div class="l-mid"><span class="wave"><u></u><u></u><u></u><u></u><u></u></span>Listening</div>
+          <div class="l-bottom"><button class="sq" onclick="hideListen();input.focus()" aria-label="Type">⌨</button><button class="bigmic" onclick="stopVoice()" aria-label="Stop"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="8.5" y="3" width="7" height="12" rx="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="sq" onclick="stopVoice()" aria-label="Close">✕</button></div></div>
+          <div class="sheet" id="sheet"><div class="card"><h3>Hey Nav setup</h3><p>Allow these once. Then say "Hey Nav, open WhatsApp" even when the app is closed. A small "NAVOX is listening" notification stays on (Android rule).</p><div id="steps"></div><div class="row"><button class="open-btn" id="wakeBtn"></button><button class="open-btn" style="background:#e9e8e4;color:#0e0f12" onclick="closeSetup()">Close</button></div></div></div>
+          <script>
+          setTimeout(()=>{const sp=document.getElementById('splash');if(sp){sp.classList.add('hide');setTimeout(()=>sp.remove(),600)}},1100);
+          const $=id=>document.getElementById(id);
+          const input=$('input'),messages=$('messages'),status=$('status'),mic=$('mic'),chat=$('chat'),sidebar=$('sidebar');
+          const NAT=window.NAVOX,WELCOME=messages.innerHTML,MIC_SVG=mic.innerHTML,isAndroid=!NAT&&/Android/i.test(navigator.userAgent);
+          const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+          let lang=store.get('nvx_lang')||'en-IN',rec=null,history=[];
+          try{history=JSON.parse(store.get('nvx_hist')||'[]')}catch(e){}
+          const PROXY='[REDACTED: proxy URL/token configured in original file]';
+          const G=q=>'https://www.google.com/search?q='+q;
+          const P=(pkg,alias,home,q)=>({pkg,alias,home,q});
+          const APPS={
+          youtube:P('com.google.android.youtube',['youtube','you tube','యూట్యూబ్'],'https://www.youtube.com/',q=>'https://www.youtube.com/results?search_query='+q),
+          instagram:P('com.instagram.android',['instagram','insta','ఇన్‌స్టాగ్రామ్','ఇన్స్టాగ్రామ్'],'https://www.instagram.com/',q=>G('site%3Ainstagram.com+'+q)),
+          whatsapp:P('com.whatsapp',['whatsapp','whats app','వాట్సాప్'],'https://web.whatsapp.com/'),
+          telegram:P('org.telegram.messenger',['telegram','టెలిగ్రామ్'],'https://web.telegram.org/'),
+          facebook:P('com.facebook.katana',['facebook','fb','ఫేస్బుక్'],'https://www.facebook.com/',q=>'https://www.facebook.com/search/top?q='+q),
+          twitter:P('com.twitter.android',['twitter','ట్విట్టర్'],'https://x.com/',q=>'https://x.com/search?q='+q),
+          snapchat:P('com.snapchat.android',['snapchat','snap'],'https://www.snapchat.com/'),
+          linkedin:P('com.linkedin.android',['linkedin'],'https://www.linkedin.com/',q=>'https://www.linkedin.com/search/results/all/?keywords='+q),
+          reddit:P('com.reddit.frontpage',['reddit'],'https://www.reddit.com/',q=>'https://www.reddit.com/search/?q='+q),
+          pinterest:P('com.pinterest',['pinterest'],'https://www.pinterest.com/',q=>'https://www.pinterest.com/search/pins/?q='+q),
+          spotify:P('com.spotify.music',['spotify','స్పాటిఫై'],'https://open.spotify.com/',q=>'https://open.spotify.com/search/'+q),
+          netflix:P('com.netflix.mediaclient',['netflix','నెట్‌ఫ్లిక్స్'],'https://www.netflix.com/search?q='),
+          hotstar:P('in.startv.hotstar',['hotstar','jiohotstar','jio hotstar'],'https://www.hotstar.com/'),
+          primevideo:P('com.amazon.avod.thirdpartyclient',['prime video','primevideo','prime'],'https://www.primevideo.com/'),
+          amazon:P('in.amazon.mShop.android.shopping',['amazon','అమెజాన్'],'https://www.amazon.in/',q=>'https://www.amazon.in/s?k='+q),
+          flipkart:P('com.flipkart.android',['flipkart','ఫ్లిప్‌కార్ట్'],'https://www.flipkart.com/',q=>'https://www.flipkart.com/search?q='+q),
+          swiggy:P('in.swiggy.android',['swiggy','స్విగ్గీ'],'https://www.swiggy.com/search?query='),
+          zomato:P('com.application.zomato',['zomato','జొమాటో'],'https://www.zomato.com/'),
+          uber:P('com.ubercab',['uber'],'https://m.uber.com/'),
+          ola:P('com.olacabs.customer',['ola'],'https://www.olacabs.com/'),
+          phonepe:P('com.phonepe.app',['phonepe','phone pe','ఫోన్‌పే'],'https://www.phonepe.com/'),
+          gpay:P('com.google.android.apps.nbu.paisa.user',['gpay','google pay','g pay'],'https://pay.google.com/'),
+          paytm:P('net.one97.paytm',['paytm','పేటీఎం'],'https://paytm.com/'),
+          maps:P('com.google.android.apps.maps',['maps','google maps','map','మ్యాప్స్'],'https://www.google.com/maps',q=>'https://www.google.com/maps/search/'+q),
+          photos:P('com.google.android.apps.photos',['photos','google photos'],'https://photos.google.com/'),
+          drive:P('com.google.android.apps.docs',['drive','google drive'],'https://drive.google.com/'),
+          meet:P('com.google.android.apps.tachyon',['meet','google meet'],'https://meet.google.com/'),
+          zoom:P('us.zoom.videomeetings',['zoom'],'https://zoom.us/'),
+          translate:P('com.google.android.apps.translate',['translate','google translate'],'https://translate.google.com/'),
+          freefiremax:P('com.dts.freefiremax',['free fire max','freefire max','ff max','ఫ్రీ ఫైర్ మాక్స్'],'https://ff.garena.com/'),
+          freefire:P('com.dts.freefireth',['free fire','freefire','ఫ్రీ ఫైర్'],'https://ff.garena.com/'),
+          chatgpt:P('com.openai.chatgpt',['chatgpt','chat gpt'],'https://chatgpt.com/',q=>'https://chatgpt.com/?q='+q),
+          gmail:P('com.google.android.gm',['gmail','జీమెయిల్'],'https://mail.google.com/',q=>'https://mail.google.com/mail/u/0/#search/'+q),
+          chrome:P('',['chrome','క్రోమ్'],'https://www.google.com/',G)};
+          function launch(pkg,fb){return'intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package='+pkg+';S.browser_fallback_url='+encodeURIComponent(fb)+';end'}
+          function link(url,pkg){if(!isAndroid||!pkg)return url;const u=new URL(url);if(u.hash)return url;return'intent://'+u.host+u.pathname+u.search+'#Intent;scheme=https;package='+pkg+';S.browser_fallback_url='+encodeURIComponent(url)+';end'}
+          function save(){store.set('nvx_hist',JSON.stringify(history.slice(-60)))}
+          function addMessage(text,type,meta='',url='',persist=true){
+          document.getElementById('welcome')?.remove();
+          const row=document.createElement('div');row.className='message '+type;
+          const av=document.createElement('div');av.className='avatar';av.textContent=type==='user'?'YOU':'N';
+          const b=document.createElement('div');b.className='bubble';b.textContent=text;
+          if(url){const a=document.createElement('a');a.className='open-btn';a.href=url;a.target='_blank';a.rel='noopener';a.textContent='Open ↗';b.appendChild(a)}
+          if(meta){const m=document.createElement('div');m.className='meta';m.textContent=meta;b.appendChild(m)}
+          row.append(av,b);messages.appendChild(row);chat.scrollTop=chat.scrollHeight;
+          if(persist){history.push({text,type,meta,url});save()}}
+          function speak(t){if(!t||!('speechSynthesis'in window))return;speechSynthesis.cancel();const v=new SpeechSynthesisUtterance(t);v.lang=lang;v.rate=.95;speechSynthesis.speak(v)}
+          const findApp=c=>{const p=' '+c+' ';return Object.keys(APPS).find(k=>APPS[k].alias.some(a=>p.includes(' '+a+' ')||p.includes(' '+a+'లో ')))};
+          const VERB=/^(open|launch|start|install|update)\s|ఓపెన్|play ?store/;
+          let installed=[],instAt=0;
+          
