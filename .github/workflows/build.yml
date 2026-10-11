@@ -1,0 +1,244 @@
+name: Build NAVOX APK
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+      - name: Generate Android project and build
+        run: |
+          set -e
+          mkdir -p app/src/main/assets app/src/main/java/com/navox/agent app/src/main/res/drawable-nodpi
+          mkdir -p .
+          cat > settings.gradle <<'EOF'
+          pluginManagement{repositories{google();mavenCentral();gradlePluginPortal()}}
+          dependencyResolutionManagement{repositories{google();mavenCentral()}}
+          rootProject.name='NAVOX'
+          include ':app'
+          EOF
+          mkdir -p .
+          cat > build.gradle <<'EOF'
+          plugins { id 'com.android.application' version '8.5.2' apply false }
+          EOF
+          mkdir -p .
+          cat > gradle.properties <<'EOF'
+          org.gradle.jvmargs=-Xmx2g
+          android.useAndroidX=false
+          EOF
+          mkdir -p app
+          cat > app/build.gradle <<'EOF'
+          plugins { id 'com.android.application' }
+          android {
+              namespace 'com.navox.agent'
+              compileSdk 34
+              defaultConfig {
+                  applicationId 'com.navox.agent'
+                  minSdk 24
+                  targetSdk 34
+                  versionCode 1
+                  versionName '1.0'
+              }
+          }
+          EOF
+          mkdir -p app/src/main
+          cat > app/src/main/AndroidManifest.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <uses-permission android:name="android.permission.INTERNET"/>
+              <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
+              <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+              <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+              <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+              <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+              <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>
+              <uses-permission android:name="android.permission.WAKE_LOCK"/>
+              <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+              <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+              <queries>
+                  <intent>
+                      <action android:name="android.intent.action.MAIN"/>
+                      <category android:name="android.intent.category.LAUNCHER"/>
+                  </intent>
+                  <intent>
+                      <action android:name="android.speech.RecognitionService"/>
+                  </intent>
+              </queries>
+              <application
+                  android:label="NAVOX AI"
+                  android:icon="@mipmap/ic_launcher"
+                  android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:launchMode="singleTask"
+                      android:showWhenLocked="true"
+                      android:turnScreenOn="true"
+                      android:windowSoftInputMode="adjustResize"
+                      android:configChanges="orientation|screenSize|keyboardHidden">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN"/>
+                          <category android:name="android.intent.category.LAUNCHER"/>
+                      </intent-filter>
+                  </activity>
+              <service
+                      android:name=".ListenService"
+                      android:exported="false"
+                      android:foregroundServiceType="microphone"/>
+              </application>
+          </manifest>
+          EOF
+          mkdir -p app/src/main/res/drawable
+          cat > app/src/main/res/drawable/ic_launcher_bg.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+              <path android:fillColor="#FCFBF8" android:pathData="M0,0h108v108h-108z"/>
+          </vector>
+          EOF
+          mkdir -p app/src/main/res/drawable
+          cat > app/src/main/res/drawable/ic_notif.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+              <path android:strokeColor="#FFFFFF" android:strokeWidth="1.3" android:strokeLineJoin="round" android:fillColor="#00000000"
+                  android:pathData="M12,2L20.58,7.05L20.58,16.95L12,22L3.42,16.95L3.42,7.05Z"/>
+              <path android:strokeColor="#FFFFFF" android:strokeWidth="1.1" android:strokeLineCap="round" android:fillColor="#00000000"
+                  android:pathData="M7.13,8.46L16.82,15.76"/>
+              <path android:fillColor="#FFFFFF"
+                  android:pathData="M7.13,8.46m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0M16.82,8.46m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0M7.26,15.76m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0M16.82,15.76m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0"/>
+          </vector>
+          EOF
+          mkdir -p app/src/main/res/mipmap-anydpi-v26
+          cat > app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+              <background android:drawable="@drawable/ic_launcher_bg"/>
+              <foreground android:drawable="@drawable/ic_launcher_fg"/>
+          </adaptive-icon>
+          EOF
+          mkdir -p app/src/main/res/mipmap-anydpi
+          cat > app/src/main/res/mipmap-anydpi/ic_launcher.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+              <item android:drawable="@drawable/ic_launcher_bg"/>
+              <item android:drawable="@drawable/ic_launcher_fg"/>
+          </layer-list>
+          EOF
+
+          cat > app/src/main/assets/index.html <<'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+          <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+          <meta name="theme-color" content="#FCFBF8"><title>NAVOX AI — Agent</title>
+          <style>
+          *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+          :root{--paper:#FCFBF8;--ink:#0E0F12;--mute:#6C707A;--line:#0E0F1220;--g:linear-gradient(135deg,#00B8FF,#0A5CFF)}
+          html,body{height:100%;margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+          body{overflow:hidden}
+          button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+          .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+          .app{height:100%;display:flex;position:relative;background:var(--paper)}
+          .main{flex:1;min-width:0;display:flex;flex-direction:column;height:100%}
+          .topbar{display:flex;align-items:center;justify-content:space-between;padding:calc(10px + env(safe-area-inset-top,0px)) 18px 6px;height:auto}
+          .hb{width:44px;height:44px;display:grid;place-items:center;margin-left:-10px}
+          .hb i{display:block;width:22px;height:2px;background:var(--ink);box-shadow:0 7px 0 var(--ink);transform:translateY(-4px);border-radius:2px;width:22px}
+          .hb i::after{content:"";display:block;width:14px;height:2px;background:var(--ink);margin-top:14px;border-radius:2px}
+          .word{font-size:12px;font-weight:600;letter-spacing:.42em;margin-right:-.42em}
+          .lang{font-size:11px;font-weight:700;letter-spacing:.14em;padding:10px 0 10px 10px;color:var(--ink);min-width:44px;text-align:right}
+          .chat{flex:1;overflow-y:auto;padding:4px 20px 14px;scroll-behavior:smooth}
+          .content{max-width:640px;margin:0 auto;min-height:100%;display:flex;flex-direction:column}
+          .welcome{display:flex;flex-direction:column;align-items:center;text-align:center;margin:auto 0;padding:4px 0 10px}
+          .hero{position:relative;width:min(62vw,236px);aspect-ratio:402/468;margin:6px 0 22px}
+          .hero svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+          .hx{fill:none;stroke:url(#hg);stroke-width:3.2;stroke-linejoin:round}
+          .dgl{stroke:url(#hg);stroke-width:3.4;stroke-linecap:round;stroke-dasharray:2 11;animation:flow 1.4s linear infinite}
+          @keyframes flow{to{stroke-dashoffset:-26}}
+          .nd{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:9px}
+          .nd b{display:block;width:40px;height:40px;border-radius:50%;background:var(--g);box-shadow:0 8px 18px #0a5cff40;transition:transform .15s}
+          .nd:active b{transform:scale(.88)}
+          .nd span{font-size:8.5px;font-weight:700;letter-spacing:.2em;margin-right:-.2em;color:var(--ink)}
+          .nd.v b::after{content:"";position:absolute;left:0;top:0;width:40px;height:40px;border-radius:50%;border:2px solid #0a84ff;animation:ping 2s ease-out infinite}
+          @keyframes ping{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+          .nd b{position:relative}
+          .tag{font-size:15px;letter-spacing:.3em;margin-right:-.3em;color:#4b4f58}
+          .rule{width:42%;height:1px;background:var(--line);margin:14px 0}
+          .hint{margin:0 0 14px;font-size:12.5px;color:var(--mute);line-height:1.5}
+          .try{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 0;font-size:11.5px;color:var(--mute)}
+          .try button{padding:4px 2px;text-decoration:underline;text-decoration-color:#0E0F1233;text-underline-offset:4px;color:var(--ink)}
+          .try em{font-style:normal;padding:4px 8px;color:#b4b7be}
+          .message{display:flex;margin:16px 0}
+          .message.user{justify-content:flex-end}
+          .avatar{display:none}
+          .message.user .bubble{background:var(--ink);color:#fff;border-radius:16px 16px 4px 16px;padding:11px 15px;max-width:82%;font-size:15px;line-height:1.45;word-break:break-word}
+          .message.agent .bubble{max-width:94%;font-size:15px;line-height:1.6;white-space:pre-wrap;word-break:break-word;padding:2px 0 2px 14px;border-left:2.5px solid #0a84ff;border-image:linear-gradient(#00B8FF,#0A5CFF) 1}
+          .meta{margin-top:7px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+          .open-btn{display:table;margin-top:10px;padding:9px 18px;border-radius:10px;background:var(--ink);color:#fff;font-size:12px;font-weight:600;letter-spacing:.06em;text-decoration:none;cursor:pointer}
+          .composer-area{border-top:1px solid var(--line);padding:10px 16px calc(8px + env(safe-area-inset-bottom,0px));background:var(--paper)}
+          .composer{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:8px}
+          .icon-btn,.send{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none}
+          .icon-btn{border:1px solid var(--line);color:var(--ink)}
+          .icon-btn.active{background:var(--ink);color:#fff}
+          .input{flex:1;min-width:0;height:46px;border:1px solid var(--line);border-radius:14px;background:#fff;outline:0;color:var(--ink);font:inherit;font-size:15px;padding:0 14px}
+          .input:focus{border-color:#0a84ff}
+          .input::placeholder{color:#9a9ea8}
+          .send{background:var(--ink);color:#fff;font-size:19px;font-weight:700}
+          .status{max-width:640px;margin:7px auto 0;text-align:center;font-size:10px;letter-spacing:.1em;color:var(--mute);min-height:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+          .sidebar{position:fixed;inset:0 auto 0 0;width:min(80vw,300px);background:var(--paper);border-right:1px solid var(--line);padding:calc(20px + env(safe-area-inset-top,0px)) 20px 18px;transform:translateX(-103%);transition:transform .28s ease;z-index:15;display:flex;flex-direction:column;box-shadow:12px 0 40px #0e0f1214}
+          .sidebar.open{transform:none}
+          .sidebar.open+.main::after{content:"";position:fixed;inset:0;background:#0e0f1252;z-index:14}
+          .brand{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.3em;font-size:14px;padding:2px 0 22px}
+          .newchat{width:100%;padding:14px;border-radius:12px;background:var(--ink);color:#fff;font-weight:600;font-size:13px;letter-spacing:.08em;margin-bottom:10px}
+          .navbutton{display:flex;align-items:baseline;gap:14px;width:100%;text-align:left;padding:15px 0;border-bottom:1px solid var(--line);font-size:15px}
+          .navbutton small{font-size:10px;color:var(--mute);letter-spacing:.1em;font-family:ui-monospace,Menlo,monospace}
+          .side-bottom{margin-top:auto;font-size:10px;letter-spacing:.2em;color:var(--mute);line-height:1.9}
+          .listen{position:fixed;inset:0;z-index:30;display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top,0px)) 22px calc(28px + env(safe-area-inset-bottom,0px));background:#0b0b0d;color:#fff}
+          .listen.show{display:flex}
+          .l-top{width:100%;display:flex;justify-content:space-between;align-items:center}
+          .lbtn{font-size:11px;font-weight:700;letter-spacing:.16em;padding:12px 0;min-width:64px;text-align:left;color:#fff}
+          .l-title{font-size:10.5px;letter-spacing:.3em;color:#a6a9b2;font-family:ui-monospace,Menlo,monospace}
+          .l-top .sp{display:block;min-width:64px}
+          .l-hex{width:min(64vw,250px);margin-top:8px}
+          .l-hex svg{width:100%;height:auto;overflow:visible;filter:drop-shadow(0 0 14px #ffffff3a)}
+          .l-hex .o{fill:none;stroke:#fff;stroke-width:3;stroke-linejoin:round}
+          .l-hex .i{fill:none;stroke:#fff9;stroke-width:2;stroke-dasharray:3 9;stroke-linecap:round;transform-box:fill-box;transform-origin:center;animation:rot 14s linear infinite}
+          .l-hex .dg{stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-dasharray:2 11;animation:flow 1.1s linear infinite}
+          .l-hex .n{fill:#fff;transform-box:fill-box;transform-origin:center;animation:np 1.6s ease-in-out infinite}
+          .l-hex .n2{animation-delay:.4s}.l-hex .n3{animation-delay:.8s}.l-hex .n4{animation-delay:1.2s}
+          @keyframes rot{to{transform:rotate(360deg)}}
+          @keyframes np{0%,100%{transform:scale(.7);opacity:.55}50%{transform:scale(1.25);opacity:1}}
+          .l-text{margin:0;font-size:21px;font-weight:300;text-align:center;line-height:1.5;max-width:320px;color:#f2f3f5}
+          .l-mid{display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#b8bcc6}
+          .wave{display:flex;align-items:center;gap:3px;height:18px}
+          .wave u{width:3px;border-radius:2px;background:#fff;animation:wv 1s ease-in-out infinite}
+          .wave u:nth-child(1){height:6px}.wave u:nth-child(2){height:14px;animation-delay:.15s}.wave u:nth-child(3){height:18px;animation-delay:.3s}.wave u:nth-child(4){height:10px;animation-delay:.45s}.wave u:nth-child(5){height:6px;animation-delay:.6s}
+          @keyframes wv{50%{transform:scaleY(.4)}}
+          .l-bottom{display:flex;align-items:center;justify-content:center;gap:30px}
+          .sq{width:48px;height:48px;border-radius:14px;border:1px solid #ffffff30;display:grid;place-items:center;color:#fff;font-size:15px}
+          .bigmic{width:78px;height:78px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#0b0b0d;box-shadow:0 0 0 10px #ffffff22,0 0 0 22px #ffffff10;animation:pulse 1.8s ease-in-out infinite}
+          @keyframes pulse{50%{box-shadow:0 0 0 14px #ffffff30,0 0 0 30px #ffffff0a}}
+          .sheet{display:none;position:fixed;inset:0;background:#0e0f1299;z-index:40;align-items:flex-end;justify-content:center}
+          .sheet.show{display:flex}
+          .card{width:min(560px,100%);background:var(--paper);border-radius:22px 22px 0 0;padding:22px 20px calc(20px + env(safe-area-inset-bottom,0px));max-height:88dvh;overflow:auto}
+          .card h3{margin:0 0 6px;font-size:16px;letter-spacing:.14em;text-transform:uppercase}
+          .card p{margin:0 0 10px;font-size:12.5px;color:var(--mute);line-height:1.55}
+          .step{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px}
+          .step .open-btn{margin:0;padding:8px 16px}
+          .card .row{display:flex;gap:10px;margin-top:16px}
+          .card .row .open-btn{margin:0;flex:1;text-align:center;border:0;font-size:13px}
+          #splash{position:fixed;inset:0;z-index:100;background:#FCFBF8;display:grid;place-items:center;transition:opacity .45s ease}
+          #splash img{width:min(80vw,380px);height:auto;display:block}
+          #splash.hide{opacity:0;pointer-events:none}
+          @media(max-height:660px){.hero{width:min(50vw,190px);margin-bottom:14px}.tag{font-size:13px}}
+          </style></head>
+          <body><div id="splash"><img alt="NAVOX AI Agent" src="data:image/jpeg;base64,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
