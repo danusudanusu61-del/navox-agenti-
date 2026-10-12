@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FCFBF8"><title>NAVOX AI — Agent</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--paper:#FCFBF8;--ink:#0E0F12;--mute:#6C707A;--line:#0E0F1220;--g:linear-gradient(135deg,#00B8FF,#0A5CFF)}
+html,body{height:100%;margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.app{height:100%;display:flex;position:relative;background:var(--paper)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;height:100%}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:calc(10px + env(safe-area-inset-top,0px)) 18px 6px;height:auto}
+.hb{width:44px;height:44px;display:grid;place-items:center;margin-left:-10px}
+.hb i{display:block;width:22px;height:2px;background:var(--ink);box-shadow:0 7px 0 var(--ink);transform:translateY(-4px);border-radius:2px;width:22px}
+.hb i::after{content:"";display:block;width:14px;height:2px;background:var(--ink);margin-top:14px;border-radius:2px}
+.word{font-size:12px;font-weight:600;letter-spacing:.42em;margin-right:-.42em}
+.lang{font-size:11px;font-weight:700;letter-spacing:.14em;padding:10px 0 10px 10px;color:var(--ink);min-width:44px;text-align:right}
+.chat{flex:1;overflow-y:auto;padding:4px 20px 14px;scroll-behavior:smooth}
+.content{max-width:640px;margin:0 auto;min-height:100%;display:flex;flex-direction:column}
+.welcome{display:flex;flex-direction:column;align-items:center;text-align:center;margin:auto 0;padding:4px 0 10px}
+.hero{position:relative;width:min(62vw,236px);aspect-ratio:402/468;margin:6px 0 22px}
+.hero svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.hx{fill:none;stroke:url(#hg);stroke-width:3.2;stroke-linejoin:round}
+.dgl{stroke:url(#hg);stroke-width:3.4;stroke-linecap:round;stroke-dasharray:2 11;animation:flow 1.4s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-26}}
+.nd{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:9px}
+.nd b{display:block;width:40px;height:40px;border-radius:50%;background:var(--g);box-shadow:0 8px 18px #0a5cff40;transition:transform .15s}
+.nd:active b{transform:scale(.88)}
+.nd span{font-size:8.5px;font-weight:700;letter-spacing:.2em;margin-right:-.2em;color:var(--ink)}
+.nd.v b::after{content:"";position:absolute;left:0;top:0;width:40px;height:40px;border-radius:50%;border:2px solid #0a84ff;animation:ping 2s ease-out infinite}
+@keyframes ping{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+.nd b{position:relative}
+.tag{font-size:15px;letter-spacing:.3em;margin-right:-.3em;color:#4b4f58}
+.rule{width:42%;height:1px;background:var(--line);margin:14px 0}
+.hint{margin:0 0 14px;font-size:12.5px;color:var(--mute);line-height:1.5}
+.try{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 0;font-size:11.5px;color:var(--mute)}
+.try button{padding:4px 2px;text-decoration:underline;text-decoration-color:#0E0F1233;text-underline-offset:4px;color:var(--ink)}
+.try em{font-style:normal;padding:4px 8px;color:#b4b7be}
+.message{display:flex;margin:16px 0}
+.message.user{justify-content:flex-end}
+.avatar{display:none}
+.message.user .bubble{background:var(--ink);color:#fff;border-radius:16px 16px 4px 16px;padding:11px 15px;max-width:82%;font-size:15px;line-height:1.45;word-break:break-word}
+.message.agent .bubble{max-width:94%;font-size:15px;line-height:1.6;white-space:pre-wrap;word-break:break-word;padding:2px 0 2px 14px;border-left:2.5px solid #0a84ff;border-image:linear-gradient(#00B8FF,#0A5CFF) 1}
+.meta{margin-top:7px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.open-btn{display:table;margin-top:10px;padding:9px 18px;border-radius:10px;background:var(--ink);color:#fff;font-size:12px;font-weight:600;letter-spacing:.06em;text-decoration:none;cursor:pointer}
+.composer-area{border-top:1px solid var(--line);padding:10px 16px calc(8px + env(safe-area-inset-bottom,0px));background:var(--paper)}
+.composer{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:8px}
+.icon-btn,.send{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none}
+.icon-btn{border:1px solid var(--line);color:var(--ink)}
+.icon-btn.active{background:var(--ink);color:#fff}
+.input{flex:1;min-width:0;height:46px;border:1px solid var(--line);border-radius:14px;background:#fff;outline:0;color:var(--ink);font:inherit;font-size:15px;padding:0 14px}
+.input:focus{border-color:#0a84ff}
+.input::placeholder{color:#9a9ea8}
+.send{background:var(--ink);color:#fff;font-size:19px;font-weight:700}
+.status{max-width:640px;margin:7px auto 0;text-align:center;font-size:10px;letter-spacing:.1em;color:var(--mute);min-height:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.sidebar{position:fixed;inset:0 auto 0 0;width:min(80vw,300px);background:var(--paper);border-right:1px solid var(--line);padding:calc(20px + env(safe-area-inset-top,0px)) 20px 18px;transform:translateX(-103%);transition:transform .28s ease;z-index:15;display:flex;flex-direction:column;box-shadow:12px 0 40px #0e0f1214}
+.sidebar.open{transform:none}
+.sidebar.open+.main::after{content:"";position:fixed;inset:0;background:#0e0f1252;z-index:14}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.3em;font-size:14px;padding:2px 0 22px}
+.newchat{width:100%;padding:14px;border-radius:12px;background:var(--ink);color:#fff;font-weight:600;font-size:13px;letter-spacing:.08em;margin-bottom:10px}
+.navbutton{display:flex;align-items:baseline;gap:14px;width:100%;text-align:left;padding:15px 0;border-bottom:1px solid var(--line);font-size:15px}
+.navbutton small{font-size:10px;color:var(--mute);letter-spacing:.1em;font-family:ui-monospace,Menlo,monospace}
+.side-bottom{margin-top:auto;font-size:10px;letter-spacing:.2em;color:var(--mute);line-height:1.9}
+.listen{position:fixed;inset:0;z-index:30;display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top,0px)) 22px calc(28px + env(safe-area-inset-bottom,0px));background:#0b0b0d;color:#fff}
+.listen.show{display:flex}
+.l-top{width:100%;display:flex;justify-content:space-between;align-items:center}
+.lbtn{font-size:11px;font-weight:700;letter-spacing:.16em;padding:12px 0;min-width:64px;text-align:left;color:#fff}
+.l-title{font-size:10.5px;letter-spacing:.3em;color:#a6a9b2;font-family:ui-monospace,Menlo,monospace}
+.l-top .sp{display:block;min-width:64px}
+.l-hex{width:min(64vw,250px);margin-top:8px}
+.l-hex svg{width:100%;height:auto;overflow:visible;filter:drop-shadow(0 0 14px #ffffff3a)}
+.l-hex .o{fill:none;stroke:#fff;stroke-width:3;stroke-linejoin:round}
+.l-hex .i{fill:none;stroke:#fff9;stroke-width:2;stroke-dasharray:3 9;stroke-linecap:round;transform-box:fill-box;transform-origin:center;animation:rot 14s linear infinite}
+.l-hex .dg{stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-dasharray:2 11;animation:flow 1.1s linear infinite}
+.l-hex .n{fill:#fff;transform-box:fill-box;transform-origin:center;animation:np 1.6s ease-in-out infinite}
+.l-hex .n2{animation-delay:.4s}.l-hex .n3{animation-delay:.8s}.l-hex .n4{animation-delay:1.2s}
+@keyframes rot{to{transform:rotate(360deg)}}
+@keyframes np{0%,100%{transform:scale(.7);opacity:.55}50%{transform:scale(1.25);opacity:1}}
+.l-text{margin:0;font-size:21px;font-weight:300;text-align:center;line-height:1.5;max-width:320px;color:#f2f3f5}
+.l-mid{display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#b8bcc6}
+.wave{display:flex;align-items:center;gap:3px;height:18px}
+.wave u{width:3px;border-radius:2px;background:#fff;animation:wv 1s ease-in-out infinite}
+.wave u:nth-child(1){height:6px}.wave u:nth-child(2){height:14px;animation-delay:.15s}.wave u:nth-child(3){height:18px;animation-delay:.3s}.wave u:nth-child(4){height:10px;animation-delay:.45s}.wave u:nth-child(5){height:6px;animation-delay:.6s}
+@keyframes wv{50%{transform:scaleY(.4)}}
+.l-bottom{display:flex;align-items:center;justify-content:center;gap:30px}
+.sq{width:48px;height:48px;border-radius:14px;border:1px solid #ffffff30;display:grid;place-items:center;color:#fff;font-size:15px}
+.bigmic{width:78px;height:78px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#0b0b0d;box-shadow:0 0 0 10px #ffffff22,0 0 0 22px #ffffff10;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 14px #ffffff30,0 0 0 30px #ffffff0a}}
+.sheet{display:none;position:fixed;inset:0;background:#0e0f1299;z-index:40;align-items:flex-end;justify-content:center}
+.sheet.show{display:flex}
+.card{width:min(560px,100%);background:var(--paper);border-radius:22px 22px 0 0;padding:22px 20px calc(20px + env(safe-area-inset-bottom,0px));max-height:88dvh;overflow:auto}
+.card h3{margin:0 0 6px;font-size:16px;letter-spacing:.14em;text-transform:uppercase}
+.card p{margin:0 0 10px;font-size:12.5px;color:var(--mute);line-height:1.55}
+.step{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px}
+.step .open-btn{margin:0;padding:8px 16px}
+.card .row{display:flex;gap:10px;margin-top:16px}
+.card .row .open-btn{margin:0;flex:1;text-align:center;border:0;font-size:13px}
+#splash{position:fixed;inset:0;z-index:100;background:#FCFBF8;display:grid;place-items:center;transition:opacity .45s ease}
+#splash svg{width:min(78vw,370px);height:auto;display:block}
+#splash.hide{opacity:0;pointer-events:none}
+@media(max-height:660px){.hero{width:min(50vw,190px);margin-bottom:14px}.tag{font-size:13px}}
+</style></head>
+<body><div id="splash"><svg viewBox="300 150 660 960" aria-label="NAVOX AI Agent"><defs><linearGradient id="sg" gradientUnits="userSpaceOnUse" x1="427" y1="192" x2="829" y2="660"><stop offset="0" stop-color="#00B8FF"/><stop offset="1" stop-color="#0A5CFF"/></linearGradient></defs><path d="M628 192L829 310V542L628 660L427 542V310Z" fill="none" stroke="url(#sg)" stroke-width="6" stroke-linejoin="round"/><path d="M514 343L741 514" stroke="url(#sg)" stroke-width="8" stroke-linecap="round"/><g fill="url(#sg)"><circle cx="514" cy="343" r="21"/><circle cx="741" cy="343" r="21"/><circle cx="517" cy="514" r="21"/><circle cx="741" cy="514" r="21"/></g><g font-family="Montserrat,Helvetica Neue,Arial,sans-serif" text-anchor="middle"><text x="640" y="822" font-size="118" font-weight="500" letter-spacing="30" fill="#0b0b0c">NAVOX</text><text x="632" y="912" font-size="50" letter-spacing="17" fill="#555">AI AGENT</text><path d="M460 977H793" stroke="#dcdcdc" stroke-width="3"/><text x="632" y="1052" font-size="40" letter-spacing="7" fill="#666">think. plan. act.</text></g></svg></div><div class="app">
+<aside class="sidebar" id="sidebar"><div class="brand"><svg width="28" height="30" viewBox="1 0 22 24" aria-hidden="true"><defs><linearGradient id="nvg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00B8FF"/><stop offset="1" stop-color="#0A5CFF"/></linearGradient></defs><g fill="none" stroke="url(#nvg)" stroke-linejoin="round" stroke-linecap="round"><path d="M12 2L20.58 7.05V16.95L12 22L3.42 16.95V7.05Z" stroke-width=".9"/><path d="M7.13 8.46L16.82 15.76" stroke-width=".7"/></g><g fill="url(#nvg)"><circle cx="7.13" cy="8.46" r="1.3"/><circle cx="16.82" cy="8.46" r="1.3"/><circle cx="7.26" cy="15.76" r="1.3"/><circle cx="16.82" cy="15.76" r="1.3"/></g></svg><span>NAVOX</span></div><button class="newchat" onclick="newChat()">NEW CHAT</button><button class="navbutton" onclick="focusInput()"><small>01</small>Search the web</button><button class="navbutton" onclick="sidebar.classList.remove('open');runPreset('help')"><small>02</small>Quick actions</button><button class="navbutton" onclick="openSetup()"><small>03</small>Hey Nav setup</button><button class="navbutton" onclick="setKey()"><small>04</small>AI settings</button><button class="navbutton" onclick="showInfo()"><small>05</small>About NAVOX</button><div class="side-bottom">NAVOX AI AGENT<br>THINK. PLAN. ACT.</div></aside>
+<main class="main"><header class="topbar"><button class="hb" id="menuBtn" aria-label="Menu"><i></i></button><span class="word">NAVOX</span><button class="lang" id="langBtn" aria-label="Voice language">EN</button></header>
+<section class="chat" id="chat"><div class="content" id="messages"><div class="welcome" id="welcome">
+<div class="hero"><svg viewBox="0 0 402 468" aria-hidden="true"><defs><linearGradient id="hg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="402" y2="468"><stop offset="0" stop-color="#00B8FF"/><stop offset="1" stop-color="#0A5CFF"/></linearGradient></defs><path class="hx" d="M201 0L402 118V350L201 468L0 350V118Z"/><line class="dgl" x1="87" y1="151" x2="314" y2="322"/></svg>
+<button class="nd v" style="left:21.6%;top:32.3%" onclick="startVoice()" aria-label="VOICE"><b></b><span>VOICE</span></button><button class="nd " style="left:78.1%;top:32.3%" onclick="fillCommand('Search ')" aria-label="SEARCH"><b></b><span>SEARCH</span></button><button class="nd " style="left:22.4%;top:68.8%" onclick="runPreset('notes')" aria-label="NOTES"><b></b><span>NOTES</span></button><button class="nd " style="left:78.1%;top:68.8%" onclick="runPreset('help')" aria-label="ACTIONS"><b></b><span>ACTIONS</span></button></div>
+<div class="tag">think. plan. act.</div><div class="rule"></div>
+<p class="hint">Tap a node, say “Hey Nav”,<br>or type a command below.</p><div class="try"><button onclick="fillCommand('Open YouTube')">open youtube</button><em>/</em><button onclick="fillCommand('Flashlight on')">flashlight on</button><em>/</em><button onclick="fillCommand('Set alarm 7 am')">alarm 7 am</button><em>/</em><button onclick="fillCommand('Play Telugu songs')">play music</button><em>/</em><button onclick="fillCommand('help')">help</button></div></div></div></section>
+<div class="composer-area"><div class="composer"><button class="icon-btn" id="mic" aria-label="Voice command"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><rect x="8.5" y="3" width="7" height="12" rx="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><input class="input" id="input" placeholder="Command or message…" autocomplete="off"><button class="send" id="send" aria-label="Send">↑</button></div><div class="status" id="status">READY · SAY “HEY NAV”</div></div></main></div>
+<div class="listen" id="listen"><div class="l-top"><button class="lbtn" onclick="stopVoice()">‹ BACK</button><span class="l-title">NAVOX · VOICE</span><span class="sp"></span></div>
+<div class="l-hex"><svg viewBox="-20 -20 442 508" aria-hidden="true"><path class="o" d="M201 0L402 118V350L201 468L0 350V118Z"/><path class="i" d="M201 65.5L345.7 150.5V317.5L201 402.5L56.3 317.5V150.5Z"/><line class="dg" x1="87" y1="151" x2="314" y2="322"/><circle class="n" cx="87" cy="151" r="15"/><circle class="n n2" cx="314" cy="151" r="15"/><circle class="n n3" cx="314" cy="322" r="15"/><circle class="n n4" cx="90" cy="322" r="15"/></svg></div>
+<p class="l-text">Say a command, like “open WhatsApp”</p>
+<div class="l-mid"><span class="wave"><u></u><u></u><u></u><u></u><u></u></span>Listening</div>
+<div class="l-bottom"><button class="sq" onclick="hideListen();input.focus()" aria-label="Type">⌨</button><button class="bigmic" onclick="stopVoice()" aria-label="Stop"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="8.5" y="3" width="7" height="12" rx="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="sq" onclick="stopVoice()" aria-label="Close">✕</button></div></div>
+<div class="sheet" id="sheet"><div class="card"><h3>Hey Nav setup</h3><p>Allow these once. Then say "Hey Nav, open WhatsApp" even when the app is closed. A small "NAVOX is listening" notification stays on (Android rule).</p><div id="steps"></div><div class="row"><button class="open-btn" id="wakeBtn"></button><button class="open-btn" style="background:#e9e8e4;color:#0e0f12" onclick="closeSetup()">Close</button></div></div></div>
+<script>
+setTimeout(()=>{const sp=document.getElementById('splash');if(sp){sp.classList.add('hide');setTimeout(()=>sp.remove(),600)}},1100);
+const $=id=>document.getElementById(id);
+const input=$('input'),messages=$('messages'),status=$('status'),mic=$('mic'),chat=$('chat'),sidebar=$('sidebar');
+const NAT=window.NAVOX,WELCOME=messages.innerHTML,MIC_SVG=mic.innerHTML,isAndroid=!NAT&&/Android/i.test(navigator.userAgent);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+let lang=store.get('nvx_lang')||'en-IN',rec=null,history=[];
+try{history=JSON.parse(store.get('nvx_hist')||'[]')}catch(e){}
+const PROXY='https://soft-hill-0529.danusudanusu61.workers.dev',PTOKEN='navox-Tq48-Lm29-Zr71';
+const G=q=>'https://www.google.com/search?q='+q;
+const P=(pkg,alias,home,q)=>({pkg,alias,home,q});
+const APPS={
+youtube:P('com.google.android.youtube',['youtube','you tube','యూట్యూబ్'],'https://www.youtube.com/',q=>'https://www.youtube.com/results?search_query='+q),
+instagram:P('com.instagram.android',['instagram','insta','ఇన్‌స్టాగ్రామ్','ఇన్స్టాగ్రామ్'],'https://www.instagram.com/',q=>G('site%3Ainstagram.com+'+q)),
+whatsapp:P('com.whatsapp',['whatsapp','whats app','వాట్సాప్'],'https://web.whatsapp.com/'),
+telegram:P('org.telegram.messenger',['telegram','టెలిగ్రామ్'],'https://web.telegram.org/'),
+facebook:P('com.facebook.katana',['facebook','fb','ఫేస్బుక్'],'https://www.facebook.com/',q=>'https://www.facebook.com/search/top?q='+q),
+twitter:P('com.twitter.android',['twitter','ట్విట్టర్'],'https://x.com/',q=>'https://x.com/search?q='+q),
+snapchat:P('com.snapchat.android',['snapchat','snap'],'https://www.snapchat.com/'),
+linkedin:P('com.linkedin.android',['linkedin'],'https://www.linkedin.com/',q=>'https://www.linkedin.com/search/results/all/?keywords='+q),
+reddit:P('com.reddit.frontpage',['reddit'],'https://www.reddit.com/',q=>'https://www.reddit.com/search/?q='+q),
+pinterest:P('com.pinterest',['pinterest'],'https://www.pinterest.com/',q=>'https://www.pinterest.com/search/pins/?q='+q),
+spotify:P('com.spotify.music',['spotify','స్పాటిఫై'],'https://open.spotify.com/',q=>'https://open.spotify.com/search/'+q),
+netflix:P('com.netflix.mediaclient',['netflix','నెట్‌ఫ్లిక్స్'],'https://www.netflix.com/',q=>'https://www.netflix.com/search?q='+q),
+hotstar:P('in.startv.hotstar',['hotstar','jiohotstar','jio hotstar'],'https://www.hotstar.com/'),
+primevideo:P('com.amazon.avod.thirdpartyclient',['prime video','primevideo','prime'],'https://www.primevideo.com/'),
+amazon:P('in.amazon.mShop.android.shopping',['amazon','అమెజాన్'],'https://www.amazon.in/',q=>'https://www.amazon.in/s?k='+q),
+flipkart:P('com.flipkart.android',['flipkart','ఫ్లిప్‌కార్ట్'],'https://www.flipkart.com/',q=>'https://www.flipkart.com/search?q='+q),
+swiggy:P('in.swiggy.android',['swiggy','స్విగ్గీ'],'https://www.swiggy.com/',q=>'https://www.swiggy.com/search?query='+q),
+zomato:P('com.application.zomato',['zomato','జొమాటో'],'https://www.zomato.com/'),
+uber:P('com.ubercab',['uber'],'https://m.uber.com/'),
+ola:P('com.olacabs.customer',['ola'],'https://www.olacabs.com/'),
+phonepe:P('com.phonepe.app',['phonepe','phone pe','ఫోన్‌పే'],'https://www.phonepe.com/'),
+gpay:P('com.google.android.apps.nbu.paisa.user',['gpay','google pay','g pay'],'https://pay.google.com/'),
+paytm:P('net.one97.paytm',['paytm','పేటీఎం'],'https://paytm.com/'),
+maps:P('com.google.android.apps.maps',['maps','google maps','map','మ్యాప్స్'],'https://www.google.com/maps',q=>'https://www.google.com/maps/search/'+q),
+photos:P('com.google.android.apps.photos',['photos','google photos'],'https://photos.google.com/'),
+drive:P('com.google.android.apps.docs',['drive','google drive'],'https://drive.google.com/'),
+meet:P('com.google.android.apps.tachyon',['meet','google meet'],'https://meet.google.com/'),
+zoom:P('us.zoom.videomeetings',['zoom'],'https://zoom.us/'),
+translate:P('com.google.android.apps.translate',['translate','google translate'],'https://translate.google.com/'),
+freefiremax:P('com.dts.freefiremax',['free fire max','freefire max','ff max','ఫ్రీ ఫైర్ మాక్స్'],'https://ff.garena.com/'),
+freefire:P('com.dts.freefireth',['free fire','freefire','ఫ్రీ ఫైర్'],'https://ff.garena.com/'),
+chatgpt:P('com.openai.chatgpt',['chatgpt','chat gpt'],'https://chatgpt.com/',q=>'https://chatgpt.com/?q='+q),
+gmail:P('com.google.android.gm',['gmail','జీమెయిల్'],'https://mail.google.com/',q=>'https://mail.google.com/mail/u/0/#search/'+q),
+chrome:P('',['chrome','క్రోమ్'],'https://www.google.com/',G)};
+function launch(pkg,fb){return'intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package='+pkg+';S.browser_fallback_url='+encodeURIComponent(fb)+';end'}
+function link(url,pkg){if(!isAndroid||!pkg)return url;const u=new URL(url);if(u.hash)return url;return'intent://'+u.host+u.pathname+u.search+'#Intent;scheme=https;package='+pkg+';S.browser_fallback_url='+encodeURIComponent(url)+';end'}
+function save(){store.set('nvx_hist',JSON.stringify(history.slice(-60)))}
+function addMessage(text,type,meta='',url='',persist=true){
+document.getElementById('welcome')?.remove();
+const row=document.createElement('div');row.className='message '+type;
+const av=document.createElement('div');av.className='avatar';av.textContent=type==='user'?'YOU':'N';
+const b=document.createElement('div');b.className='bubble';b.textContent=text;
+if(url){const a=document.createElement('a');a.className='open-btn';a.href=url;a.target='_blank';a.rel='noopener';a.textContent='Open ↗';b.appendChild(a)}
+if(meta){const m=document.createElement('div');m.className='meta';m.textContent=meta;b.appendChild(m)}
+row.append(av,b);messages.appendChild(row);chat.scrollTop=chat.scrollHeight;
+if(persist){history.push({text,type,meta,url});save()}}
+function speak(t){if(!t||!('speechSynthesis'in window))return;speechSynthesis.cancel();const v=new SpeechSynthesisUtterance(t);v.lang=lang;v.rate=.95;speechSynthesis.speak(v)}
+const findApp=c=>{const p=' '+c+' ';return Object.keys(APPS).find(k=>APPS[k].alias.some(a=>p.includes(' '+a+' ')||p.includes(' '+a+'లో ')))};
+const VERB=/^(open|launch|start|install|update)\s|ఓపెన్|play ?store/;
+let installed=[],instAt=0;
+const nz=x=>x.toLowerCase().replace(/[^a-z0-9\u0C00-\u0C7F]+/g,'');
+const OPENEND=/\sopen(\s+chey\w*)?$|ఓపెన్/;
+function refreshInstalled(){if(!NAT)return;if(installed.length&&Date.now()-instAt<300000)return;try{installed=JSON.parse(NAT.getApps()).map(a=>({n:nz(a.n),l:a.n,p:a.p,np:nz(a.p)})).filter(a=>a.n.length>1);instAt=Date.now()}catch(e){}}
+function lev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=Array.from({length:n+1},(_,j)=>j);for(let i=1;i<=m;i++){const q=[i];for(let j=1;j<=n;j++)q[j]=Math.min(p[j]+1,q[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=q}return p[n]}
+function bestApp(name){refreshInstalled();const t=nz(name||'');if(t.length<2)return;let best,bs=0;for(const a of installed){let sc=0;if(a.n===t)sc=100;else if(t.length>=3&&(a.n.includes(t)||(a.n.length>=4&&t.includes(a.n))))sc=85-Math.abs(a.n.length-t.length);else if(t.length>=5&&a.np.includes(t))sc=78;else if(t.length>=4){const sim=1-lev(a.n,t)/Math.max(a.n.length,t.length);if(sim>=0.72)sc=sim*80}if(sc>bs){bs=sc;best=a}}return bs>=58?best:undefined}
+const findInstalled=c=>bestApp(c.replace(/^(open|launch|start)\s+/,'').replace(/\sopen(\s+chey\w*)?$/,'').replace(/\s(app|game)$/,''));
+const FILL=new Set(['start','open','launch','and','app','website','please','on','in','lo','ni','cheyyi','cheyyandi','cheyyu','chey','ఓపెన్','చేయి','చెయ్యి','లో','ని']);
+const SK=['search','find','vetuku','vedhuku','chupinchu','వెతుకు','వెతకండి','సెర్చ్'];
+function detectCommand(raw){
+const c=raw.toLowerCase().replace(/[.,!?]/g,'').trim();
+if(/^(open|launch)\s+google$/.test(c))return{action:'open',app:'chrome',query:''};
+let name=findApp(c);
+if(name){const al=APPS[name].alias;if(!(VERB.test(c)||al.some(a=>c.startsWith(a))||/\s(lo|in|on|and)\s/.test(c)))name=null}
+if(name){
+if(APPS[name].pkg&&/play ?store|install|update|ఇన్‌స్టాల్/.test(c))return{action:'store',app:name};
+let rest=c;APPS[name].alias.forEach(a=>{rest=rest.split(a).join(' ')});
+const hasS=SK.some(w=>c.includes(w))||/\slo\s/.test(c);
+const qm=c.match(/(?:search|find|play|vetuku|vedhuku|chupinchu)\s+(?:for\s+|the\s+)?(.+)$/);
+let q=qm?qm[1].split(/\s+/).filter(w=>w&&!FILL.has(w)&&w!=='the').join(' '):'';
+if(!q&&hasS)q=rest.split(/\s+/).filter(w=>w&&!FILL.has(w)&&!SK.includes(w)&&w!=='the').join(' ');
+APPS[name].alias.forEach(a=>{q=q.split(a).join(' ')});
+return{action:'open',app:name,query:q.replace(/\s+(on|in)\s*$/,'').replace(/\s+/g,' ').trim()}}
+if(VERB.test(c)||OPENEND.test(c)){const a=findInstalled(c);if(a)return{action:'open',pkg:a.p,label:a.l,query:''}}
+const g=c.match(/^(open|launch|start)\s+(.+)$/);if(g&&!/\s(and|lo|in)\s+search/.test(c))return{action:'store',app:'',query:g[2]};
+return{action:'search',query:raw.trim().replace(/^(search|find)\s+(for\s+)?/i,'')||raw.trim()}}
+const SYS='You are NAVOX, a concise assistant inside a browser app. Understand English, Telugu and Tanglish (Telugu in English letters). Reply ONLY with JSON: {"action":"chat|open|search|store","app":"'+Object.keys(APPS).join('|')+'|","query":"","reply":"short reply in the user\'s language"}. chat = answer directly in reply. open = open app, optional query to search inside it. search = Google search. store = Play Store page of app. If the app is not in the list, use action store with query = the app name.';
+async function askAI(raw){
+const msgs=history.filter(h=>h.type==='user'||h.meta.startsWith('AI')||h.meta.startsWith('Action')).slice(-8).map(h=>({role:h.type==='user'?'user':'assistant',content:h.text}));
+const r=await fetch(PROXY||'https://api.anthropic.com/v1/messages',{method:'POST',headers:PROXY?{'content-type':'application/json','x-app-token':PTOKEN}:{'content-type':'application/json','x-api-key':store.get('nvx_key'),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-5-5',max_tokens:600,system:SYS,messages:msgs.concat([{role:'user',content:raw}]).filter((m,i,a)=>i===0||m.role!==a[i-1].role)})});
+const d=await r.json();if(!r.ok)throw new Error(d.error?.message||r.status);
+const t=(d.content||[]).map(x=>x.text||'').join('').replace(/```json|```/g,'').trim();
+try{return JSON.parse(t)}catch(e){return{action:'chat',reply:t}}}
+function act(c){
+let url,label,reply=c.reply,real=c.pkg||'';
+if(NAT){
+if(c.action==='open'&&c.app&&!APPS[c.app]){const b=bestApp(c.app);if(b){real=b.p;c.label=b.l}}
+if(c.action==='store'&&!APPS[c.app]&&c.query){const b=bestApp(c.query);if(b){c={action:'open',label:b.l,query:''};real=b.p}}
+const K=APPS[c.app];
+if(c.action==='open'&&K&&K.pkg){refreshInstalled();real=(!installed.length||installed.some(a=>a.p===K.pkg))?K.pkg:((bestApp(K.alias[0])||{}).p||'');if(!real)c={action:'store',app:c.app,nf:1}}
+if(c.action==='open'&&real&&!c.query){const n=c.label||c.app||real;if(NAT.launch(real)){const m=reply||'Opening '+n+'.';addMessage(m,'agent','Action · '+n);speak(m);status.textContent='Opened '+n+' ✓';return}c={action:'store',app:c.app,query:n,nf:1}}
+}
+const A=APPS[c.app];
+if(c.action==='chat'){addMessage(reply||'…','agent','AI reply');speak(reply);status.textContent='Ready when you are · Enter to send';return}
+if(c.action==='store'&&A&&A.pkg){url='https://play.google.com/store/apps/details?id='+A.pkg;label='Play Store';reply=reply||(c.nf?c.app+' isn\'t installed on this phone. Opening Play Store.':'Opening '+c.app+' on Play Store.')}
+else if(c.action==='store'||(c.action==='open'&&c.app&&!A)){const n=c.query||c.app;url='https://play.google.com/store/search?q='+encodeURIComponent(n)+'&c=apps';label='Play Store';reply=reply||(NAT?'I couldn\'t find "'+n+'" on this phone, so I\'m opening Play Store.':'Opening Play Store search for '+n+'.')}
+else if(c.action==='open'&&A){const qf=A.q||(x=>G(encodeURIComponent(c.app+' ')+x));url=(!c.query&&isAndroid&&A.pkg)?launch(A.pkg,A.home):link(c.query?qf(encodeURIComponent(c.query)):A.home,A.pkg);label=c.app;reply=reply||(c.query?'Opening '+c.app+' and searching '+c.query+'.':'Opening '+c.app+'.')}
+else{const q=c.query||'';url=G(encodeURIComponent(q));label='Google search';reply=reply||'Searching the web for '+q+'.'}
+addMessage(reply,'agent','Action · '+label,url);speak(reply);
+const pk=label==='Play Store'?'':(real||(A&&A.pkg&&c.action==='open'?A.pkg:''));
+const w=NAT?NAT.openUrl(url,pk):window.open(url,'_blank');status.textContent=w?'Opened '+label+' ✓':'Tap Open to continue'}
+const DUR=/(\d+)\s*(sec\w*|సెక\w*|min\w*|నిమిష\w*|nimish\w*|hour\w*|hr\w*|gant\w*|గంట\w*)/;
+const notes={get(){try{return JSON.parse(store.get('nvx_notes')||'[]')}catch(e){return[]}},set(a){store.set('nvx_notes',JSON.stringify(a))}};
+function nativeCmd(raw){
+const r=raw.trim(),c=r.toLowerCase().replace(/[,!?]/g,'');let m;
+const on=!/\b(off|band|aapu)\b|ఆఫ్/.test(c);
+if(/^(help|commands)$/.test(c))return{action:'help'};
+if(/torch|flash ?light|టార్చ్|ఫ్లాష్/.test(c))return{action:'torch',on};
+if(m=c.match(/(?:^|\s)(?:call|dial|కాల్)\s*(\+?\d[\d\s-]{2,})/))return{action:'call',num:m[1].replace(/[\s-]/g,'')};
+if(m=c.match(/^(?:sms|text|message|msg)\s+(\+?\d[\d-]{5,})\s*(?:saying|that|:)?\s*(.*)$/))return{action:'sms',num:m[1].replace(/-/g,''),body:m[2]};
+if(/timer|టైమర్|remind/.test(c)&&(m=c.match(DUR))){const n=+m[1],u=m[2],sec=n*(/^(s|స)/.test(u)?1:/^(h|g|గ)/.test(u)?3600:60);const l=(c.match(/\d+\s*\S+\s+(?:to|ki)\s+(.+)$/)||c.match(/remind(?: me)?(?: to| about)?\s+(.+?)\s+(?:in|after)\s+\d/)||[])[1];return{action:'timer',sec,label:l||'NAVOX'}}
+if(/alarm|అలారం|wake me/.test(c)&&(m=c.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/))){let h=+m[1];const mi=+(m[2]||0),p=m[3];if(p==='pm'&&h<12)h+=12;if(p==='am'&&h===12)h=0;if(h<24&&mi<60)return{action:'alarm',h,mi,label:'NAVOX'}}
+const S={wifi:/wi-?fi|వైఫై/,bluetooth:/bluetooth|బ్లూటూత్/,location:/location settings|gps/,display:/brightness|display/,sound:/volume|sound settings/,airplane:/airplane|flight mode/,battery:/battery saver|battery settings/};
+if(c.split(/\s+/).length<=5&&!/(how|what|why|password)/.test(c))for(const k in S)if(S[k].test(c))return{action:'settings',which:k};
+if(/^(open |launch )?settings$/.test(c))return{action:'settings',which:'settings'};
+if((m=c.match(/^play\s+(.+?)\s+(?:on|in)\s+(?:youtube|you tube)$/)))return{action:'play',query:m[1],yt:true};
+if(!/play ?store/.test(c)&&((m=c.match(/^play\s+(.+)$/))||(m=c.match(/^(.+?)\s+play(?:\s+chey\w*)?$/))))return{action:'play',query:m[1]};
+if(m=r.match(/^(?:note down|save note|note|remember)\s*[:\-]?\s+(.+)$/i))return{action:'note',text:m[1]};
+if(/^(show |my |list )?notes$/.test(c))return{action:'notes'};
+if(/^clear notes$/.test(c))return{action:'clearnotes'};
+if(c.length<26&&(/\b(time|date|samayam)\b/.test(c)||/టైమ్|సమయం/.test(c)))return{action:'time'}}
+function say(m,meta){addMessage(m,'agent',meta||'Action');speak(m);status.textContent='Ready when you are · Enter to send'}
+function doNative(c){
+const A=c.action;
+if(A==='help')return say('Try: open <any app> · call 100 · sms 9876543210 hello · alarm 7 am · timer 10 minutes · remind me to call mom in 10 minutes · flashlight on/off · wifi · play <song> · note <text> · notes · time','Help');
+if(A==='notes'){const n=notes.get();return say(n.length?n.map((x,i)=>(i+1)+'. '+x).join('\n'):'No notes yet. Say: note buy milk','Notes')}
+if(A==='note'){const n=notes.get();n.push(c.text);notes.set(n);return say('Saved note: '+c.text,'Notes')}
+if(A==='clearnotes'){notes.set([]);return say('All notes cleared.','Notes')}
+if(A==='time')return say(new Date().toLocaleString('en-IN',{dateStyle:'full',timeStyle:'short'}),'Time');
+if(A==='play'){if(c.yt)return act({action:'open',app:'youtube',query:c.query});if(NAT&&NAT.play(c.query))return say('Playing '+c.query+'.','Music');return act({action:'open',app:'youtube',query:c.query})}
+if(!NAT){if(A==='call'){window.open('tel:'+c.num);return say('Opening dialer.')}if(A==='sms'){window.open('sms:'+c.num+'?body='+encodeURIComponent(c.body||''));return say('Opening messages.')}return say('This works only in the NAVOX Android app.','System')}
+let ok=false,m='';
+if(A==='torch'){ok=NAT.torch(c.on);m='Flashlight '+(c.on?'on':'off')+'.'}
+else if(A==='call'){ok=NAT.dial(c.num);m='Dialer opened for '+c.num+'.'}
+else if(A==='sms'){ok=NAT.sms(c.num,c.body||'');m='Message ready for '+c.num+'. Tap send.'}
+else if(A==='alarm'){ok=NAT.alarm(c.h,c.mi,c.label);m='Alarm set for '+String(c.h).padStart(2,'0')+':'+String(c.mi).padStart(2,'0')+'.'}
+else if(A==='timer'){ok=NAT.timer(c.sec,c.label);m='Timer set for '+Math.round(c.sec/6)/10+' min'+(c.label!=='NAVOX'?' · '+c.label:'')+'.'}
+else if(A==='settings'){ok=NAT.settings(c.which);m='Opening '+c.which+' settings.'}
+say(ok?m:'Could not do that on this phone.','Action')}
+let aiBlock=0;
+async function runCommand(){
+const raw=input.value.trim();if(!raw)return;input.value='';addMessage(raw,'user');status.textContent='Understanding your request…';
+if(NAT&&NAT.exec){let r='';try{r=NAT.exec(raw)}catch(e){}if(r){say(r);return}}
+const nc=nativeCmd(raw);if(nc){doNative(nc);return}
+const dc=detectCommand(raw);
+const sure=dc.action==='open'||(dc.action==='store'&&dc.nf);
+let cmd=null;
+if(!sure&&(PROXY||store.get('nvx_key'))&&Date.now()>aiBlock){try{cmd=await askAI(raw)}catch(e){const m=String(e.message||e);if(/quota|exceeded|rate|429/i.test(m)){aiBlock=Date.now()+3600000;addMessage('Gemini free limit reached for now. Basic commands still work.','agent','System')}else addMessage('AI error: '+m.slice(0,140)+' — using basic mode.','agent','System')}}
+act(cmd||dc)}
+function showListen(){$('listen').classList.add('show')}
+function hideListen(){$('listen').classList.remove('show')}
+function stopVoice(){if(rec)rec.stop();hideListen()}
+function runPreset(t){input.value=t;runCommand()}
+function fillCommand(t){input.value=t;input.focus();sidebar.classList.remove('open')}
+function focusInput(){input.focus();sidebar.classList.remove('open')}
+function newChat(){history=[];save();messages.innerHTML=WELCOME;status.textContent='Ready when you are · Enter to send';sidebar.classList.remove('open');input.focus()}
+function showInfo(){addMessage('NAVOX AI is a browser-based agent preview. With an API key it understands natural language (English/Telugu); without one it uses basic commands. It opens websites and Android apps, and runs web searches.','agent','About NAVOX');sidebar.classList.remove('open')}
+function setKey(){const k=prompt('Paste your Anthropic API key to enable AI mode (saved only on this device). Leave empty to remove it:','');if(k===null)return;sidebar.classList.remove('open');if(k.trim()){store.set('nvx_key',k.trim());addMessage('AI mode enabled.','agent','System')}else{store.del('nvx_key');addMessage('AI mode off. Basic commands only.','agent','System')}}
+function startVoice(){
+showListen();
+if(NAT){status.textContent='Listening…';NAT.listen(lang);return}
+if(rec){rec.stop();return}
+const S=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!S){hideListen();addMessage('Voice recognition is not available in this browser. Try Chrome.','agent','System');return}
+const r=rec=new S();r.lang=lang;r.interimResults=false;
+r.onstart=()=>{mic.classList.add('active');mic.textContent='■';input.placeholder='Listening…';status.textContent='Listening… tap ■ to stop'};
+r.onresult=e=>{hideListen();input.value=e.results[0][0].transcript;runCommand()};
+r.onerror=e=>{hideListen();addMessage(e.error==='not-allowed'?'Microphone permission denied. Allow it in Chrome settings.':'I could not understand the voice command.','agent','System')};
+r.onend=()=>{hideListen();rec=null;mic.classList.remove('active');mic.innerHTML=MIC_SVG;input.placeholder='Message NAVOX...'};
+try{r.start()}catch(e){rec=null}}
+function setLang(){$('langBtn').textContent=lang==='te-IN'?'తె':'EN'}
+$('langBtn').onclick=()=>{lang=lang==='te-IN'?'en-IN':'te-IN';store.set('nvx_lang',lang);if(NAT)NAT.setLang(lang);setLang();status.textContent='Voice language: '+(lang==='te-IN'?'Telugu':'English')};
+setLang();
+$('send').onclick=runCommand;mic.onclick=startVoice;
+input.addEventListener('keydown',e=>{if(e.key==='Enter')runCommand()});
+$('menuBtn').onclick=()=>sidebar.classList.toggle('open');
+document.querySelector('.main').addEventListener('click',e=>{if(!e.target.closest('#menuBtn'))sidebar.classList.remove('open')});
+window.onNativeVoice=t=>{hideListen();input.value=t;runCommand()};window.onNativeVoiceError=()=>{hideListen();status.textContent='Could not hear you. Tap the mic and try again.'};
+const STEPS=[['mic','Microphone (required)','askMic'],['notif','Notifications','askNotif'],['battery','Battery: Unrestricted','askBattery'],['overlay','Display over other apps','askOverlay'],['access','Accessibility (Wi-Fi, screenshot)','askAccess']];
+function setupState(){try{return JSON.parse(NAT.setupStatus())}catch(e){return{}}}
+function renderSetup(){const s=setupState();$('steps').innerHTML=STEPS.map(x=>'<div class="step"><span>'+(s[x[0]]?'✅ ':'⬜ ')+x[1]+'</span>'+(s[x[0]]?'':'<button class="open-btn" onclick="NAT.'+x[2]+'()">Allow</button>')+'</div>').join('');const b=$('wakeBtn');b.textContent=s.listening?'Stop Hey Nav':'Start Hey Nav';b.disabled=!s.mic&&!s.listening;b.style.opacity=b.disabled?.4:1}
+function openSetup(){sidebar.classList.remove('open');if(!NAT){return say('Hey Nav works only in the NAVOX Android app.','System')}$('sheet').classList.add('show');renderSetup()}
+function closeSetup(){$('sheet').classList.remove('show')}
+$('wakeBtn').onclick=()=>{const s=setupState();if(s.listening)NAT.stopListening();else{NAT.setLang(lang);NAT.startListening()}setTimeout(renderSetup,600)};
+window.onNativeResume=()=>{if($('sheet').classList.contains('show'))renderSetup()};
+window.onWakeCommand=t=>{input.value=t;runCommand()};
+if(NAT){NAT.setLang(lang);if(!store.get('nvx_setup')){store.set('nvx_setup','1');setTimeout(openSetup,700)}}
+history.forEach(h=>addMessage(h.text,h.type,h.meta,h.url,false));
+</script>
+</body>
+</html>

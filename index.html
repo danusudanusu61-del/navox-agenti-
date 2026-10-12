@@ -182,7 +182,7 @@ const VERB=/^(open|launch|start|install|update)\s|ఓపెన్|play ?store/;
 let installed=[],instAt=0;
 const nz=x=>x.toLowerCase().replace(/[^a-z0-9\u0C00-\u0C7F]+/g,'');
 const OPENEND=/\sopen(\s+chey\w*)?$|ఓపెన్/;
-function refreshInstalled(){if(!NAT)return;if(installed.length&&Date.now()-instAt<15000)return;try{installed=JSON.parse(NAT.getApps()).map(a=>({n:nz(a.n),l:a.n,p:a.p,np:nz(a.p)})).filter(a=>a.n.length>1);instAt=Date.now()}catch(e){}}
+function refreshInstalled(){if(!NAT)return;if(installed.length&&Date.now()-instAt<300000)return;try{installed=JSON.parse(NAT.getApps()).map(a=>({n:nz(a.n),l:a.n,p:a.p,np:nz(a.p)})).filter(a=>a.n.length>1);instAt=Date.now()}catch(e){}}
 function lev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=Array.from({length:n+1},(_,j)=>j);for(let i=1;i<=m;i++){const q=[i];for(let j=1;j<=n;j++)q[j]=Math.min(p[j]+1,q[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=q}return p[n]}
 function bestApp(name){refreshInstalled();const t=nz(name||'');if(t.length<2)return;let best,bs=0;for(const a of installed){let sc=0;if(a.n===t)sc=100;else if(t.length>=3&&(a.n.includes(t)||(a.n.length>=4&&t.includes(a.n))))sc=85-Math.abs(a.n.length-t.length);else if(t.length>=5&&a.np.includes(t))sc=78;else if(t.length>=4){const sim=1-lev(a.n,t)/Math.max(a.n.length,t.length);if(sim>=0.72)sc=sim*80}if(sc>bs){bs=sc;best=a}}return bs>=58?best:undefined}
 const findInstalled=c=>bestApp(c.replace(/^(open|launch|start)\s+/,'').replace(/\sopen(\s+chey\w*)?$/,'').replace(/\s(app|game)$/,''));
@@ -271,6 +271,7 @@ say(ok?m:'Could not do that on this phone.','Action')}
 let aiBlock=0;
 async function runCommand(){
 const raw=input.value.trim();if(!raw)return;input.value='';addMessage(raw,'user');status.textContent='Understanding your request…';
+if(NAT&&NAT.exec){let r='';try{r=NAT.exec(raw)}catch(e){}if(r){say(r);return}}
 const nc=nativeCmd(raw);if(nc){doNative(nc);return}
 const dc=detectCommand(raw);
 const sure=dc.action==='open'||(dc.action==='store'&&dc.nf);
@@ -306,7 +307,7 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter')runCommand()});
 $('menuBtn').onclick=()=>sidebar.classList.toggle('open');
 document.querySelector('.main').addEventListener('click',e=>{if(!e.target.closest('#menuBtn'))sidebar.classList.remove('open')});
 window.onNativeVoice=t=>{hideListen();input.value=t;runCommand()};window.onNativeVoiceError=()=>{hideListen();status.textContent='Could not hear you. Tap the mic and try again.'};
-const STEPS=[['mic','Microphone (required)','askMic'],['notif','Notifications','askNotif'],['battery','Battery: Unrestricted','askBattery'],['overlay','Display over other apps','askOverlay']];
+const STEPS=[['mic','Microphone (required)','askMic'],['notif','Notifications','askNotif'],['battery','Battery: Unrestricted','askBattery'],['overlay','Display over other apps','askOverlay'],['access','Accessibility (Wi-Fi, screenshot)','askAccess']];
 function setupState(){try{return JSON.parse(NAT.setupStatus())}catch(e){return{}}}
 function renderSetup(){const s=setupState();$('steps').innerHTML=STEPS.map(x=>'<div class="step"><span>'+(s[x[0]]?'✅ ':'⬜ ')+x[1]+'</span>'+(s[x[0]]?'':'<button class="open-btn" onclick="NAT.'+x[2]+'()">Allow</button>')+'</div>').join('');const b=$('wakeBtn');b.textContent=s.listening?'Stop Hey Nav':'Start Hey Nav';b.disabled=!s.mic&&!s.listening;b.style.opacity=b.disabled?.4:1}
 function openSetup(){sidebar.classList.remove('open');if(!NAT){return say('Hey Nav works only in the NAVOX Android app.','System')}$('sheet').classList.add('show');renderSetup()}
