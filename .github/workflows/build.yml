@@ -49,6 +49,11 @@ jobs:
                   versionName '1.0'
               }
           }
+
+          dependencies {
+              implementation 'net.java.dev.jna:jna:5.13.0@aar'
+              implementation 'com.alphacephei:vosk-android:0.3.47'
+          }
           EOF
           mkdir -p app/src/main
           cat > app/src/main/AndroidManifest.xml <<'EOF'
@@ -94,6 +99,18 @@ jobs:
                       android:name=".ListenService"
                       android:exported="false"
                       android:foregroundServiceType="microphone"/>
+                  <service
+                      android:name=".NavoxAccess"
+                      android:exported="true"
+                      android:label="NAVOX"
+                      android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+                      <intent-filter>
+                          <action android:name="android.accessibilityservice.AccessibilityService"/>
+                      </intent-filter>
+                      <meta-data
+                          android:name="android.accessibilityservice"
+                          android:resource="@xml/accessibility_config"/>
+                  </service>
               </application>
           </manifest>
           EOF
@@ -134,10 +151,35 @@ jobs:
               <item android:drawable="@drawable/ic_launcher_fg"/>
           </layer-list>
           EOF
+          mkdir -p app/src/main/res/xml
+          cat > app/src/main/res/xml/accessibility_config.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+              android:accessibilityEventTypes="typeWindowStateChanged"
+              android:accessibilityFeedbackType="feedbackGeneric"
+              android:accessibilityFlags="flagDefault"
+              android:canRetrieveWindowContent="true"
+              android:notificationTimeout="100"
+              android:description="@string/a11y_desc"/>
+          EOF
+          mkdir -p app/src/main/res/values
+          cat > app/src/main/res/values/strings.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <string name="a11y_desc">NAVOX uses this to take screenshots, press Back or Home, and flip Wi-Fi and Bluetooth switches when you ask.</string>
+          </resources>
+          EOF
           cp MainActivity.java app/src/main/java/com/navox/agent/MainActivity.java
           cp ListenService.java app/src/main/java/com/navox/agent/ListenService.java
+          cp CommandRunner.java app/src/main/java/com/navox/agent/CommandRunner.java
+          cp NavoxAccess.java app/src/main/java/com/navox/agent/NavoxAccess.java
+          cp WakeEngine.java app/src/main/java/com/navox/agent/WakeEngine.java
           cp logo_fg.png app/src/main/res/drawable-nodpi/ic_launcher_fg.png
           cp index.html app/src/main/assets/index.html
+          curl -fL --retry 3 -o /tmp/vosk.zip https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
+          unzip -q /tmp/vosk.zip -d /tmp/voskm
+          mv /tmp/voskm/vosk-model-small-en-us-0.15 app/src/main/assets/model
+          echo navox-model-1 > app/src/main/assets/model/uuid
           gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
