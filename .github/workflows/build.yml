@@ -169,13 +169,8 @@ jobs:
               <string name="a11y_desc">NAVOX uses this to take screenshots, press Back or Home, and flip Wi-Fi and Bluetooth switches when you ask.</string>
           </resources>
           EOF
-          cp MainActivity.java app/src/main/java/com/navox/agent/MainActivity.java
-          cp ListenService.java app/src/main/java/com/navox/agent/ListenService.java
-          cp CommandRunner.java app/src/main/java/com/navox/agent/CommandRunner.java
-          cp NavoxAccess.java app/src/main/java/com/navox/agent/NavoxAccess.java
-          cp WakeEngine.java app/src/main/java/com/navox/agent/WakeEngine.java
+          awk '/^@@@FILE /{f=$2; next} f{print > f}' "$(ls navox_bundle*.txt | head -n 1)"
           cp logo_fg.png app/src/main/res/drawable-nodpi/ic_launcher_fg.png
-          cp index.html app/src/main/assets/index.html
           curl -fL --retry 3 -o /tmp/vosk.zip https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
           unzip -q /tmp/vosk.zip -d /tmp/voskm
           mv /tmp/voskm/vosk-model-small-en-us-0.15 app/src/main/assets/model
@@ -184,4 +179,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: NAVOX-APK
+
           path: app/build/outputs/apk/debug/app-debug.apk
