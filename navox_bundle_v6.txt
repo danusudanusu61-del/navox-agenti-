@@ -1,0 +1,394 @@
+==================================================
+FILE: app/src/main/assets/index.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FCFBF8"><title>NAVOX AI — Agent v6</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--paper:#FCFBF8;--ink:#0E0F12;--mute:#6C707A;--line:#0E0F1220;--g:linear-gradient(135deg,#00B8FF,#0A5CFF)}
+html,body{height:100%;margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+.app{height:100%;display:flex;position:relative;background:var(--paper)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;height:100%}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:calc(10px + env(safe-area-inset-top,0px)) 18px 6px;height:auto}
+.hb{width:44px;height:44px;display:grid;place-items:center;margin-left:-10px}
+.hb i{display:block;width:22px;height:2px;background:var(--ink);box-shadow:0 7px 0 var(--ink);transform:translateY(-4px);border-radius:2px}
+.word{font-size:12px;font-weight:600;letter-spacing:.42em;margin-right:-.42em}
+.lang{font-size:11px;font-weight:700;letter-spacing:.14em;padding:10px 0 10px 10px;color:var(--ink);min-width:44px;text-align:right}
+.chat{flex:1;overflow-y:auto;padding:4px 20px 14px;scroll-behavior:smooth}
+.content{max-width:640px;margin:0 auto;min-height:100%;display:flex;flex-direction:column}
+.welcome{display:flex;flex-direction:column;align-items:center;text-align:center;margin:auto 0;padding:4px 0 10px}
+.tag{font-size:15px;letter-spacing:.3em;margin-right:-.3em;color:#4b4f58}
+.rule{width:42%;height:1px;background:var(--line);margin:14px 0}
+.hint{margin:0 0 14px;font-size:12.5px;color:var(--mute);line-height:1.5}
+.message{display:flex;margin:16px 0}
+.message.user{justify-content:flex-end}
+.message.user .bubble{background:var(--ink);color:#fff;border-radius:16px 16px 4px 16px;padding:11px 15px;max-width:82%;font-size:15px}
+.message.agent .bubble{max-width:94%;font-size:15px;line-height:1.6;padding:2px 0 2px 14px;border-left:2.5px solid #0a84ff}
+.meta{margin-top:7px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-family:monospace}
+.open-btn{display:table;margin-top:10px;padding:9px 18px;border-radius:10px;background:var(--ink);color:#fff;font-size:12px;font-weight:600;text-decoration:none}
+.composer-area{border-top:1px solid var(--line);padding:10px 16px calc(8px + env(safe-area-inset-bottom,0px));background:var(--paper)}
+.composer{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:8px}
+.icon-btn,.send{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none}
+.icon-btn{border:1px solid var(--line);color:var(--ink)}
+.input{flex:1;height:46px;border:1px solid var(--line);border-radius:14px;background:#fff;outline:0;font:inherit;font-size:15px;padding:0 14px}
+.send{background:var(--ink);color:#fff;font-size:19px;font-weight:700}
+.status{max-width:640px;margin:7px auto 0;text-align:center;font-size:10px;letter-spacing:.1em;color:var(--mute);font-family:monospace}
+.sidebar{position:fixed;inset:0 auto 0 0;width:min(80vw,300px);background:var(--paper);border-right:1px solid var(--line);padding:20px;transform:translateX(-103%);transition:transform .28s ease;z-index:15;display:flex;flex-direction:column}
+.sidebar.open{transform:none}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.3em;font-size:14px;padding-bottom:22px}
+.newchat{width:100%;padding:14px;border-radius:12px;background:var(--ink);color:#fff;font-weight:600;font-size:13px;margin-bottom:10px}
+.navbutton{display:flex;align-items:baseline;gap:14px;width:100%;text-align:left;padding:15px 0;border-bottom:1px solid var(--line);font-size:15px}
+.navbutton small{font-size:10px;color:var(--mute);font-family:monospace}
+</style></head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+<div class="brand"><span>NAVOX v6</span></div>
+<button class="newchat" onclick="newChat()">NEW CHAT</button>
+<button class="navbutton" onclick="openSetup()"><small>01</small>Hey Nav Setup</button>
+</aside>
+<main class="main">
+<header class="topbar"><button class="hb" id="menuBtn"><i></i></button><span class="word">NAVOX v6</span><button class="lang" id="langBtn">EN</button></header>
+<section class="chat" id="chat">
+<div class="content" id="messages">
+<div class="welcome" id="welcome">
+<div class="tag">think. plan. act.</div><div class="rule"></div>
+<p class="hint">Instant AI Agent built by Naveen</p>
+</div>
+</div>
+</section>
+<div class="composer-area">
+<div class="composer">
+<button class="icon-btn" id="mic"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><rect x="8.5" y="3" width="7" height="12" rx="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+<input class="input" id="input" placeholder="Command or message…" autocomplete="off">
+<button class="send" id="send">↑</button>
+</div>
+<div class="status" id="status">READY · MICRO-SECOND AGENT</div>
+</div>
+</main>
+</div>
+<script>
+const $=id=>document.getElementById(id),input=$('input'),messages=$('messages'),status=$('status'),mic=$('mic'),chat=$('chat'),sidebar=$('sidebar');
+let lang='en-IN';
+function addMessage(text,type,meta='',url=''){
+document.getElementById('welcome')?.remove();
+const row=document.createElement('div');row.className='message '+type;
+const b=document.createElement('div');b.className='bubble';b.textContent=text;
+if(url){const a=document.createElement('a');a.className='open-btn';a.href=url;a.target='_blank';a.textContent='Open ↗';b.appendChild(a);}
+if(meta){const m=document.createElement('div');m.className='meta';m.textContent=meta;b.appendChild(m);}
+row.appendChild(b);messages.appendChild(row);chat.scrollTop=chat.scrollHeight;
+}
+function speak(t){if(!t)return;if(window.NAVOX&&window.NAVOX.speak){window.NAVOX.speak(t,lang);return}if(!('speechSynthesis'in window))return;speechSynthesis.cancel();const v=new SpeechSynthesisUtterance(t);v.lang=lang;speechSynthesis.speak(v)}
+function runCommand(){
+const raw=input.value.trim();if(!raw)return;input.value='';addMessage(raw,'user');
+if(raw.toLowerCase().includes('owner')||raw.toLowerCase().includes('built')){
+const r="I am NAVOX AI, built by my owner Naveen.";addMessage(r,'agent','NAVOX');speak(r);return;
+}
+if(window.NAVOX&&window.NAVOX.exec){let res=window.NAVOX.exec(raw);if(res){addMessage(res,'agent','Action');speak(res);return;}}
+addMessage("Processed: "+raw,'agent','AI Response');speak("Done");
+}
+$('send').onclick=runCommand;
+input.addEventListener('keydown',e=>{if(e.key==='Enter')runCommand()});
+$('menuBtn').onclick=()=>sidebar.classList.toggle('open');
+function newChat(){messages.innerHTML='';sidebar.classList.remove('open');}
+function openSetup(){sidebar.classList.remove('open');if(window.NAVOX)window.NAVOX.askMic();}
+</script>
+</body>
+</html>
+
+==================================================
+FILE: app/src/main/java/com/navox/agent/MainActivity.java
+==================================================
+package com.navox.agent;
+
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.View;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import org.json.JSONObject;
+
+public class MainActivity extends Activity {
+    WebView web;
+
+    @Override
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        getWindow().setStatusBarColor(Color.parseColor("#FCFBF8"));
+        getWindow().setNavigationBarColor(Color.parseColor("#FCFBF8"));
+        web = new WebView(this);
+        web.setBackgroundColor(Color.parseColor("#FCFBF8"));
+        setContentView(web);
+        WebSettings s = web.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setAllowFileAccess(true);
+        s.setAllowUniversalAccessFromFileURLs(true);
+        web.addJavascriptInterface(new Bridge(), "NAVOX");
+        web.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView v, String url) {
+                if (url.startsWith("file:")) return false;
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                return true;
+            }
+        });
+        web.loadUrl("file:///android_asset/index.html");
+    }
+
+    class Bridge {
+        @JavascriptInterface
+        public String exec(String text) {
+            String r = CommandRunner.run(MainActivity.this, text);
+            return r == null ? "" : r;
+        }
+        @JavascriptInterface
+        public void speak(String text, String lang) {
+            Voice.speak(MainActivity.this, text, lang);
+        }
+        @JavascriptInterface
+        public void askMic() {
+            if (Build.VERSION.SDK_INT >= 23) {
+                requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 2);
+            }
+        }
+    }
+}
+
+==================================================
+FILE: app/src/main/java/com/navox/agent/ListenService.java
+==================================================
+package com.navox.agent;
+
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ServiceInfo;
+import android.os.Build;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.PowerManager;
+import android.widget.Toast;
+
+public class ListenService extends Service {
+    static boolean running = false;
+    PowerManager.WakeLock wl;
+    WakeEngine wake;
+
+    @Override
+    public IBinder onBind(Intent i) { return null; }
+
+    @Override
+    public int onStartCommand(Intent i, int flags, int id) {
+        startFg();
+        running = true;
+        if (wl == null) {
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "navox:listen");
+            wl.acquire();
+        }
+        if (wake == null) {
+            wake = new WakeEngine(this, new WakeEngine.Callback() {
+                public void onReady() { }
+                public void onWake() {
+                    Toast.makeText(ListenService.this, "NAVOX Triggered Instantly!", Toast.LENGTH_SHORT).show();
+                }
+                public void onFail() { }
+            });
+            wake.init();
+        }
+        return START_STICKY;
+    }
+
+    void startFg() {
+        String ch = "navox_listen";
+        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= 26) {
+            nm.createNotificationChannel(new NotificationChannel(ch, "NAVOX v6 active", NotificationManager.IMPORTANCE_LOW));
+        }
+        Notification.Builder b = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(this, ch) : new Notification.Builder(this);
+        b.setContentTitle("NAVOX v6 Running");
+        b.setContentText("Micro-second wake active");
+        b.setSmallIcon(R.drawable.ic_notif);
+        Notification n = b.build();
+        if (Build.VERSION.SDK_INT >= 30) startForeground(1, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
+        else startForeground(1, n);
+    }
+
+    @Override
+    public void onDestroy() {
+        running = false;
+        if (wake != null) wake.destroy();
+        if (wl != null && wl.isHeld()) wl.release();
+        super.onDestroy();
+    }
+}
+
+==================================================
+FILE: app/src/main/java/com/navox/agent/WakeEngine.java
+==================================================
+package com.navox.agent;
+
+import android.content.Context;
+import java.io.IOException;
+import java.util.regex.Pattern;
+import org.json.JSONObject;
+import org.vosk.Model;
+import org.vosk.Recognizer;
+import org.vosk.android.RecognitionListener;
+import org.vosk.android.SpeechService;
+import org.vosk.android.StorageService;
+
+public class WakeEngine implements RecognitionListener {
+    public interface Callback {
+        void onReady();
+        void onWake();
+        void onFail();
+    }
+
+    static final String GRAMMAR = "[\"hey nav\", \"hey nova\", \"hey nave\", \"[unk]\"]";
+    static final Pattern WAKE = Pattern.compile("\\b(hey|hi|ok)\\s+(nav|nova|nave)\\b", Pattern.CASE_INSENSITIVE);
+
+    final Context ctx;
+    final Callback cb;
+    Model model;
+    Recognizer rec;
+    SpeechService ss;
+    boolean dead = false;
+
+    public WakeEngine(Context c, Callback cb) {
+        this.ctx = c;
+        this.cb = cb;
+    }
+
+    public void init() {
+        StorageService.unpack(ctx, "model", "model",
+            new StorageService.Callback<Model>() {
+                public void onComplete(Model m) {
+                    if (dead) return;
+                    model = m;
+                    try {
+                        rec = new Recognizer(model, 16000.0f, GRAMMAR);
+                        resume();
+                    } catch (Exception e) { cb.onFail(); }
+                }
+            },
+            new StorageService.Callback<IOException>() {
+                public void onComplete(IOException e) { cb.onFail(); }
+            });
+    }
+
+    public void resume() {
+        if (dead || rec == null) return;
+        try {
+            if (ss != null) { ss.stop(); ss.shutdown(); }
+            rec.reset();
+            ss = new SpeechService(rec, 16000.0f);
+            ss.startListening(this);
+            cb.onReady();
+        } catch (Exception e) { }
+    }
+
+    public void destroy() {
+        dead = true;
+        if (ss != null) { try { ss.stop(); } catch(Exception e){} }
+        try { if (rec != null) rec.close(); } catch(Exception e){}
+        try { if (model != null) model.close(); } catch(Exception e){}
+    }
+
+    @Override
+    public void onPartialResult(String json) {
+        try {
+            JSONObject o = new JSONObject(json);
+            if (WAKE.matcher(o.optString("partial", "")).find()) {
+                cb.onWake();
+            }
+        } catch (Exception e) { }
+    }
+
+    @Override public void onResult(String s) { }
+    @Override public void onFinalResult(String s) { }
+    @Override public void onError(Exception e) { }
+    @Override public void onTimeout() { }
+}
+
+==================================================
+FILE: app/src/main/java/com/navox/agent/CommandRunner.java
+==================================================
+package com.navox.agent;
+
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+
+public class CommandRunner {
+    public static String run(Context c, String raw) {
+        String t = raw.toLowerCase().trim();
+        if (t.startsWith("open instagram")) {
+            try {
+                Intent i = c.getPackageManager().getLaunchIntentForPackage("com.instagram.android");
+                if (i != null) { i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); c.startActivity(i); return "Instagram opened successfully."; }
+            } catch(Exception e) {}
+            return "Could not open Instagram.";
+        }
+        if (t.startsWith("search")) {
+            String q = t.replace("search", "").trim();
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=" + Uri.encode(q)));
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            c.startActivity(i);
+            return "Searching for " + q;
+        }
+        return null;
+    }
+}
+
+==================================================
+FILE: app/src/main/java/com/navox/agent/Voice.java
+==================================================
+package com.navox.agent;
+
+import android.content.Context;
+import android.speech.tts.TextToSpeech;
+import java.util.Locale;
+
+public class Voice {
+    static TextToSpeech tts;
+    static boolean ready = false;
+
+    public static void speak(Context ctx, final String text, String lang) {
+        if (text == null || text.isEmpty()) return;
+        final Locale loc = "te-IN".equals(lang) ? new Locale("te", "IN") : new Locale("en", "IN");
+        if (tts == null) {
+            tts = new TextToSpeech(ctx.getApplicationContext(), new TextToSpeech.OnInitListener() {
+                public void onInit(int status) {
+                    if (status == TextToSpeech.SUCCESS) {
+                        ready = true;
+                        tts.setLanguage(loc);
+                        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "navox_v6");
+                    }
+                }
+            });
+        } else if (ready) {
+            tts.setLanguage(loc);
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "navox_v6");
+        }
+    }
+}
