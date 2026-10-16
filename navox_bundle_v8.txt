@@ -1,0 +1,2339 @@
+@@@FILE app/src/main/assets/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FCFBF8"><title>NAVOX AI — Agent</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--paper:#FCFBF8;--ink:#0E0F12;--mute:#6C707A;--line:#0E0F1220;--g:linear-gradient(135deg,#00B8FF,#0A5CFF)}
+html,body{height:100%;margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.app{height:100%;display:flex;position:relative;background:var(--paper)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;height:100%}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:calc(10px + env(safe-area-inset-top,0px)) 18px 6px;height:auto}
+.hb{width:44px;height:44px;display:grid;place-items:center;margin-left:-10px}
+.hb i{display:block;width:22px;height:2px;background:var(--ink);box-shadow:0 7px 0 var(--ink);transform:translateY(-4px);border-radius:2px;width:22px}
+.hb i::after{content:"";display:block;width:14px;height:2px;background:var(--ink);margin-top:14px;border-radius:2px}
+.word{font-size:12px;font-weight:600;letter-spacing:.42em;margin-right:-.42em}
+.lang{font-size:11px;font-weight:700;letter-spacing:.14em;padding:10px 0 10px 10px;color:var(--ink);min-width:44px;text-align:right}
+.chat{flex:1;overflow-y:auto;padding:4px 20px 14px;scroll-behavior:smooth}
+.content{max-width:640px;margin:0 auto;min-height:100%;display:flex;flex-direction:column}
+.welcome{display:flex;flex-direction:column;align-items:center;text-align:center;margin:auto 0;padding:4px 0 10px}
+.hero{position:relative;width:min(62vw,236px);aspect-ratio:402/468;margin:6px 0 22px}
+.hero svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.hx{fill:none;stroke:url(#hg);stroke-width:3.2;stroke-linejoin:round}
+.dgl{stroke:url(#hg);stroke-width:3.4;stroke-linecap:round;stroke-dasharray:2 11;animation:flow 1.4s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-26}}
+.nd{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:9px}
+.nd b{display:block;width:40px;height:40px;border-radius:50%;background:var(--g);box-shadow:0 8px 18px #0a5cff40;transition:transform .15s}
+.nd:active b{transform:scale(.88)}
+.nd span{font-size:8.5px;font-weight:700;letter-spacing:.2em;margin-right:-.2em;color:var(--ink)}
+.nd.v b::after{content:"";position:absolute;left:0;top:0;width:40px;height:40px;border-radius:50%;border:2px solid #0a84ff;animation:ping 2s ease-out infinite}
+@keyframes ping{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+.nd b{position:relative}
+.tag{font-size:15px;letter-spacing:.3em;margin-right:-.3em;color:#4b4f58}
+.rule{width:42%;height:1px;background:var(--line);margin:14px 0}
+.hint{margin:0 0 14px;font-size:12.5px;color:var(--mute);line-height:1.5}
+.try{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 0;font-size:11.5px;color:var(--mute)}
+.try button{padding:4px 2px;text-decoration:underline;text-decoration-color:#0E0F1233;text-underline-offset:4px;color:var(--ink)}
+.try em{font-style:normal;padding:4px 8px;color:#b4b7be}
+.message{display:flex;margin:16px 0}
+.message.user{justify-content:flex-end}
+.avatar{display:none}
+.message.user .bubble{background:var(--ink);color:#fff;border-radius:16px 16px 4px 16px;padding:11px 15px;max-width:82%;font-size:15px;line-height:1.45;word-break:break-word}
+.message.agent .bubble{max-width:94%;font-size:15px;line-height:1.6;white-space:pre-wrap;word-break:break-word;padding:2px 0 2px 14px;border-left:2.5px solid #0a84ff;border-image:linear-gradient(#00B8FF,#0A5CFF) 1}
+.meta{margin-top:7px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.open-btn{display:table;margin-top:10px;padding:9px 18px;border-radius:10px;background:var(--ink);color:#fff;font-size:12px;font-weight:600;letter-spacing:.06em;text-decoration:none;cursor:pointer}
+.composer-area{border-top:1px solid var(--line);padding:10px 16px calc(8px + env(safe-area-inset-bottom,0px));background:var(--paper)}
+.composer{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:8px}
+.icon-btn,.send{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none}
+.icon-btn{border:1px solid var(--line);color:var(--ink)}
+.icon-btn.active{background:var(--ink);color:#fff}
+.input{flex:1;min-width:0;height:46px;border:1px solid var(--line);border-radius:14px;background:#fff;outline:0;color:var(--ink);font:inherit;font-size:15px;padding:0 14px}
+.input:focus{border-color:#0a84ff}
+.input::placeholder{color:#9a9ea8}
+.send{background:var(--ink);color:#fff;font-size:19px;font-weight:700}
+.status{max-width:640px;margin:7px auto 0;text-align:center;font-size:10px;letter-spacing:.1em;color:var(--mute);min-height:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.sidebar{position:fixed;inset:0 auto 0 0;width:min(80vw,300px);background:var(--paper);border-right:1px solid var(--line);padding:calc(20px + env(safe-area-inset-top,0px)) 20px 18px;transform:translateX(-103%);transition:transform .28s ease;z-index:15;display:flex;flex-direction:column;box-shadow:12px 0 40px #0e0f1214}
+.sidebar.open{transform:none}
+.sidebar.open+.main::after{content:"";position:fixed;inset:0;background:#0e0f1252;z-index:14}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.3em;font-size:14px;padding:2px 0 22px}
+.newchat{width:100%;padding:14px;border-radius:12px;background:var(--ink);color:#fff;font-weight:600;font-size:13px;letter-spacing:.08em;margin-bottom:10px}
+.navbutton{display:flex;align-items:baseline;gap:14px;width:100%;text-align:left;padding:15px 0;border-bottom:1px solid var(--line);font-size:15px}
+.navbutton small{font-size:10px;color:var(--mute);letter-spacing:.1em;font-family:ui-monospace,Menlo,monospace}
+.side-bottom{margin-top:auto;font-size:10px;letter-spacing:.2em;color:var(--mute);line-height:1.9}
+.listen{position:fixed;inset:0;z-index:30;display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top,0px)) 22px calc(28px + env(safe-area-inset-bottom,0px));background:#0b0b0d;color:#fff}
+.listen.show{display:flex}
+.l-top{width:100%;display:flex;justify-content:space-between;align-items:center}
+.lbtn{font-size:11px;font-weight:700;letter-spacing:.16em;padding:12px 0;min-width:64px;text-align:left;color:#fff}
+.l-title{font-size:10.5px;letter-spacing:.3em;color:#a6a9b2;font-family:ui-monospace,Menlo,monospace}
+.l-top .sp{display:block;min-width:64px}
+.l-hex{width:min(64vw,250px);margin-top:8px}
+.l-hex svg{width:100%;height:auto;overflow:visible;filter:drop-shadow(0 0 14px #ffffff3a)}
+.l-hex .o{fill:none;stroke:#fff;stroke-width:3;stroke-linejoin:round}
+.l-hex .i{fill:none;stroke:#fff9;stroke-width:2;stroke-dasharray:3 9;stroke-linecap:round;transform-box:fill-box;transform-origin:center;animation:rot 14s linear infinite}
+.l-hex .dg{stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-dasharray:2 11;animation:flow 1.1s linear infinite}
+.l-hex .n{fill:#fff;transform-box:fill-box;transform-origin:center;animation:np 1.6s ease-in-out infinite}
+.l-hex .n2{animation-delay:.4s}.l-hex .n3{animation-delay:.8s}.l-hex .n4{animation-delay:1.2s}
+@keyframes rot{to{transform:rotate(360deg)}}
+@keyframes np{0%,100%{transform:scale(.7);opacity:.55}50%{transform:scale(1.25);opacity:1}}
+.l-text{margin:0;font-size:21px;font-weight:300;text-align:center;line-height:1.5;max-width:320px;color:#f2f3f5}
+.l-mid{display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#b8bcc6}
+.wave{display:flex;align-items:center;gap:3px;height:18px}
+.wave u{width:3px;border-radius:2px;background:#fff;animation:wv 1s ease-in-out infinite}
+.wave u:nth-child(1){height:6px}.wave u:nth-child(2){height:14px;animation-delay:.15s}.wave u:nth-child(3){height:18px;animation-delay:.3s}.wave u:nth-child(4){height:10px;animation-delay:.45s}.wave u:nth-child(5){height:6px;animation-delay:.6s}
+@keyframes wv{50%{transform:scaleY(.4)}}
+.l-bottom{display:flex;align-items:center;justify-content:center;gap:30px}
+.sq{width:48px;height:48px;border-radius:14px;border:1px solid #ffffff30;display:grid;place-items:center;color:#fff;font-size:15px}
+.bigmic{width:78px;height:78px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#0b0b0d;box-shadow:0 0 0 10px #ffffff22,0 0 0 22px #ffffff10;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 14px #ffffff30,0 0 0 30px #ffffff0a}}
+.sheet{display:none;position:fixed;inset:0;background:#0e0f1299;z-index:40;align-items:flex-end;justify-content:center}
+.sheet.show{display:flex}
+.card{width:min(560px,100%);background:var(--paper);border-radius:22px 22px 0 0;padding:22px 20px calc(20px + env(safe-area-inset-bottom,0px));max-height:88dvh;overflow:auto}
+.card h3{margin:0 0 6px;font-size:16px;letter-spacing:.14em;text-transform:uppercase}
+.card p{margin:0 0 10px;font-size:12.5px;color:var(--mute);line-height:1.55}
+.step{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px}
+.step .open-btn{margin:0;padding:8px 16px}
+.card .row{display:flex;gap:10px;margin-top:16px}
+.card .row .open-btn{margin:0;flex:1;text-align:center;border:0;font-size:13px}
+#splash{position:fixed;inset:0;z-index:100;background:#FCFBF8;display:grid;place-items:center;transition:opacity .45s ease}
+#splash svg{width:min(78vw,370px);height:auto;display:block}
+#splash.hide{opacity:0;pointer-events:none}
+@media(max-height:660px){.hero{width:min(50vw,190px);margin-bottom:14px}.tag{font-size:13px}}
+</style></head>
+<body><div id="splash"><svg viewBox="300 150 660 960" aria-label="NAVOX AI Agent"><defs><linearGradient id="sg" gradientUnits="userSpaceOnUse" x1="427" y1="192" x2="829" y2="660"><stop offset="0" stop-color="#00B8FF"/><stop offset="1" stop-color="#0A5CFF"/></linearGradient></defs><path d="M628 192L829 310V542L628 660L427 542V310Z" fill="none" stroke="url(#sg)" stroke-width="6" stroke-linejoin="round"/><path d="M514 343L741 514" stroke="url(#sg)" stroke-width="8" stroke-linecap="round"/><g fill="url(#sg)"><circle cx="514" cy="343" r="21"/><circle cx="741" cy="343" r="21"/><circle cx="517" cy="514" r="21"/><circle cx="741" cy="514" r="21"/></g><g font-family="Montserrat,Helvetica Neue,Arial,sans-serif" text-anchor="middle"><text x="640" y="822" font-size="118" font-weight="500" letter-spacing="30" fill="#0b0b0c">NAVOX</text><text x="632" y="912" font-size="50" letter-spacing="17" fill="#555">AI AGENT</text><path d="M460 977H793" stroke="#dcdcdc" stroke-width="3"/><text x="632" y="1052" font-size="40" letter-spacing="7" fill="#666">think. plan. act.</text></g></svg></div><div class="app">
+<aside class="sidebar" id="sidebar"><div class="brand"><svg width="28" height="30" viewBox="1 0 22 24" aria-hidden="true"><defs><linearGradient id="nvg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00B8FF"/><stop offset="1" stop-color="#0A5CFF"/></linearGradient></defs><g fill="none" stroke="url(#nvg)" stroke-linejoin="round" stroke-linecap="round"><path d="M12 2L20.58 7.05V16.95L12 22L3.42 16.95V7.05Z" stroke-width=".9"/><path d="M7.13 8.46L16.82 15.76" stroke-width=".7"/></g><g fill="url(#nvg)"><circle cx="7.13" cy="8.46" r="1.3"/><circle cx="16.82" cy="8.46" r="1.3"/><circle cx="7.26" cy="15.76" r="1.3"/><circle cx="16.82" cy="15.76" r="1.3"/></g></svg><span>NAVOX</span></div><button class="newchat" onclick="newChat()">NEW CHAT</button><button class="navbutton" onclick="focusInput()"><small>01</small>Search the web</button><button class="navbutton" onclick="sidebar.classList.remove('open');runPreset('help')"><small>02</small>Quick actions</button><button class="navbutton" onclick="openSetup()"><small>03</small>Hey Nav setup</button><button class="navbutton" onclick="setKey()"><small>04</small>AI settings</button><button class="navbutton" onclick="showInfo()"><small>05</small>About NAVOX</button><div class="side-bottom">NAVOX AI AGENT<br>THINK. PLAN. ACT.</div></aside>
+<main class="main"><header class="topbar"><button class="hb" id="menuBtn" aria-label="Menu"><i></i></button><span class="word">NAVOX</span><button class="lang" id="langBtn" aria-label="Voice language">EN</button></header>
+<section class="chat" id="chat"><div class="content" id="messages"><div class="welcome" id="welcome">
+<div class="hero"><svg viewBox="0 0 402 468" aria-hidden="true"><defs><linearGradient id="hg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="402" y2="468"><stop offset="0" stop-color="#00B8FF"/><stop offset="1" stop-color="#0A5CFF"/></linearGradient></defs><path class="hx" d="M201 0L402 118V350L201 468L0 350V118Z"/><line class="dgl" x1="87" y1="151" x2="314" y2="322"/></svg>
+<button class="nd v" style="left:21.6%;top:32.3%" onclick="startVoice()" aria-label="VOICE"><b></b><span>VOICE</span></button><button class="nd " style="left:78.1%;top:32.3%" onclick="fillCommand('Search ')" aria-label="SEARCH"><b></b><span>SEARCH</span></button><button class="nd " style="left:22.4%;top:68.8%" onclick="runPreset('notes')" aria-label="NOTES"><b></b><span>NOTES</span></button><button class="nd " style="left:78.1%;top:68.8%" onclick="runPreset('help')" aria-label="ACTIONS"><b></b><span>ACTIONS</span></button></div>
+<div class="tag">think. plan. act.</div><div class="rule"></div>
+<p class="hint">Tap a node, say “Hey Nav”,<br>or type a command below.</p><div class="try"><button onclick="fillCommand('Open YouTube')">open youtube</button><em>/</em><button onclick="fillCommand('Flashlight on')">flashlight on</button><em>/</em><button onclick="fillCommand('Set alarm 7 am')">alarm 7 am</button><em>/</em><button onclick="fillCommand('Play Telugu songs')">play music</button><em>/</em><button onclick="fillCommand('help')">help</button></div></div></div></section>
+<div class="composer-area"><div class="composer"><button class="icon-btn" id="mic" aria-label="Voice command"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><rect x="8.5" y="3" width="7" height="12" rx="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><input class="input" id="input" placeholder="Command or message…" autocomplete="off"><button class="send" id="send" aria-label="Send">↑</button></div><div class="status" id="status">READY · SAY “HEY NAV”</div></div></main></div>
+<div class="listen" id="listen"><div class="l-top"><button class="lbtn" onclick="stopVoice()">‹ BACK</button><span class="l-title">NAVOX · VOICE</span><span class="sp"></span></div>
+<div class="l-hex"><svg viewBox="-20 -20 442 508" aria-hidden="true"><path class="o" d="M201 0L402 118V350L201 468L0 350V118Z"/><path class="i" d="M201 65.5L345.7 150.5V317.5L201 402.5L56.3 317.5V150.5Z"/><line class="dg" x1="87" y1="151" x2="314" y2="322"/><circle class="n" cx="87" cy="151" r="15"/><circle class="n n2" cx="314" cy="151" r="15"/><circle class="n n3" cx="314" cy="322" r="15"/><circle class="n n4" cx="90" cy="322" r="15"/></svg></div>
+<p class="l-text">Say a command, like “open WhatsApp”</p>
+<div class="l-mid"><span class="wave"><u></u><u></u><u></u><u></u><u></u></span>Listening</div>
+<div class="l-bottom"><button class="sq" onclick="hideListen();input.focus()" aria-label="Type">⌨</button><button class="bigmic" onclick="stopVoice()" aria-label="Stop"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="8.5" y="3" width="7" height="12" rx="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="sq" onclick="stopVoice()" aria-label="Close">✕</button></div></div>
+<div class="sheet" id="sheet"><div class="card"><h3>Hey Nav setup</h3><p>Allow these once. Then say "Hey Nav, open WhatsApp" even when the app is closed. A small "NAVOX is listening" notification stays on (Android rule).</p><div id="steps"></div><div class="row"><button class="open-btn" id="wakeBtn"></button><button class="open-btn" style="background:#e9e8e4;color:#0e0f12" onclick="closeSetup()">Close</button></div></div></div>
+<script>
+setTimeout(()=>{const sp=document.getElementById('splash');if(sp){sp.classList.add('hide');setTimeout(()=>sp.remove(),600)}},1100);
+const $=id=>document.getElementById(id);
+const input=$('input'),messages=$('messages'),status=$('status'),mic=$('mic'),chat=$('chat'),sidebar=$('sidebar');
+const NAT=window.NAVOX,WELCOME=messages.innerHTML,MIC_SVG=mic.innerHTML,isAndroid=!NAT&&/Android/i.test(navigator.userAgent);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+let lang=store.get('nvx_lang')||'en-IN',rec=null,history=[];
+try{history=JSON.parse(store.get('nvx_hist')||'[]')}catch(e){}
+const PROXY='https://soft-hill-0529.danusudanusu61.workers.dev',PTOKEN='navox-Tq48-Lm29-Zr71';
+const G=q=>'https://www.google.com/search?q='+q;
+const P=(pkg,alias,home,q)=>({pkg,alias,home,q});
+const APPS={
+youtube:P('com.google.android.youtube',['youtube','you tube','యూట్యూబ్'],'https://www.youtube.com/',q=>'https://www.youtube.com/results?search_query='+q),
+instagram:P('com.instagram.android',['instagram','insta','ఇన్‌స్టాగ్రామ్','ఇన్స్టాగ్రామ్'],'https://www.instagram.com/',q=>G('site%3Ainstagram.com+'+q)),
+whatsapp:P('com.whatsapp',['whatsapp','whats app','వాట్సాప్'],'https://web.whatsapp.com/'),
+telegram:P('org.telegram.messenger',['telegram','టెలిగ్రామ్'],'https://web.telegram.org/'),
+facebook:P('com.facebook.katana',['facebook','fb','ఫేస్బుక్'],'https://www.facebook.com/',q=>'https://www.facebook.com/search/top?q='+q),
+twitter:P('com.twitter.android',['twitter','ట్విట్టర్'],'https://x.com/',q=>'https://x.com/search?q='+q),
+snapchat:P('com.snapchat.android',['snapchat','snap'],'https://www.snapchat.com/'),
+linkedin:P('com.linkedin.android',['linkedin'],'https://www.linkedin.com/',q=>'https://www.linkedin.com/search/results/all/?keywords='+q),
+reddit:P('com.reddit.frontpage',['reddit'],'https://www.reddit.com/',q=>'https://www.reddit.com/search/?q='+q),
+pinterest:P('com.pinterest',['pinterest'],'https://www.pinterest.com/',q=>'https://www.pinterest.com/search/pins/?q='+q),
+spotify:P('com.spotify.music',['spotify','స్పాటిఫై'],'https://open.spotify.com/',q=>'https://open.spotify.com/search/'+q),
+netflix:P('com.netflix.mediaclient',['netflix','నెట్‌ఫ్లిక్స్'],'https://www.netflix.com/',q=>'https://www.netflix.com/search?q='+q),
+hotstar:P('in.startv.hotstar',['hotstar','jiohotstar','jio hotstar'],'https://www.hotstar.com/'),
+primevideo:P('com.amazon.avod.thirdpartyclient',['prime video','primevideo','prime'],'https://www.primevideo.com/'),
+amazon:P('in.amazon.mShop.android.shopping',['amazon','అమెజాన్'],'https://www.amazon.in/',q=>'https://www.amazon.in/s?k='+q),
+flipkart:P('com.flipkart.android',['flipkart','ఫ్లిప్‌కార్ట్'],'https://www.flipkart.com/',q=>'https://www.flipkart.com/search?q='+q),
+swiggy:P('in.swiggy.android',['swiggy','స్విగ్గీ'],'https://www.swiggy.com/',q=>'https://www.swiggy.com/search?query='+q),
+zomato:P('com.application.zomato',['zomato','జొమాటో'],'https://www.zomato.com/'),
+uber:P('com.ubercab',['uber'],'https://m.uber.com/'),
+ola:P('com.olacabs.customer',['ola'],'https://www.olacabs.com/'),
+phonepe:P('com.phonepe.app',['phonepe','phone pe','ఫోన్‌పే'],'https://www.phonepe.com/'),
+gpay:P('com.google.android.apps.nbu.paisa.user',['gpay','google pay','g pay'],'https://pay.google.com/'),
+paytm:P('net.one97.paytm',['paytm','పేటీఎం'],'https://paytm.com/'),
+maps:P('com.google.android.apps.maps',['maps','google maps','map','మ్యాప్స్'],'https://www.google.com/maps',q=>'https://www.google.com/maps/search/'+q),
+photos:P('com.google.android.apps.photos',['photos','google photos'],'https://photos.google.com/'),
+drive:P('com.google.android.apps.docs',['drive','google drive'],'https://drive.google.com/'),
+meet:P('com.google.android.apps.tachyon',['meet','google meet'],'https://meet.google.com/'),
+zoom:P('us.zoom.videomeetings',['zoom'],'https://zoom.us/'),
+translate:P('com.google.android.apps.translate',['translate','google translate'],'https://translate.google.com/'),
+freefiremax:P('com.dts.freefiremax',['free fire max','freefire max','ff max','ఫ్రీ ఫైర్ మాక్స్'],'https://ff.garena.com/'),
+freefire:P('com.dts.freefireth',['free fire','freefire','ఫ్రీ ఫైర్'],'https://ff.garena.com/'),
+chatgpt:P('com.openai.chatgpt',['chatgpt','chat gpt'],'https://chatgpt.com/',q=>'https://chatgpt.com/?q='+q),
+gmail:P('com.google.android.gm',['gmail','జీమెయిల్'],'https://mail.google.com/',q=>'https://mail.google.com/mail/u/0/#search/'+q),
+chrome:P('',['chrome','క్రోమ్'],'https://www.google.com/',G)};
+function launch(pkg,fb){return'intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package='+pkg+';S.browser_fallback_url='+encodeURIComponent(fb)+';end'}
+function link(url,pkg){if(!isAndroid||!pkg)return url;const u=new URL(url);if(u.hash)return url;return'intent://'+u.host+u.pathname+u.search+'#Intent;scheme=https;package='+pkg+';S.browser_fallback_url='+encodeURIComponent(url)+';end'}
+function save(){store.set('nvx_hist',JSON.stringify(history.slice(-60)))}
+function addMessage(text,type,meta='',url='',persist=true){
+document.getElementById('welcome')?.remove();
+const row=document.createElement('div');row.className='message '+type;
+const av=document.createElement('div');av.className='avatar';av.textContent=type==='user'?'YOU':'N';
+const b=document.createElement('div');b.className='bubble';b.textContent=text;
+if(url){const a=document.createElement('a');a.className='open-btn';a.href=url;a.target='_blank';a.rel='noopener';a.textContent='Open ↗';b.appendChild(a)}
+if(meta){const m=document.createElement('div');m.className='meta';m.textContent=meta;b.appendChild(m)}
+row.append(av,b);messages.appendChild(row);chat.scrollTop=chat.scrollHeight;
+if(persist){history.push({text,type,meta,url});save()}}
+function speak(t){if(!t)return;t=String(t).replace(/[*_`#]/g,'').slice(0,300);if(NAT&&NAT.speak){NAT.speak(t,lang);return}if(!('speechSynthesis'in window))return;speechSynthesis.cancel();const v=new SpeechSynthesisUtterance(t);v.lang=lang;v.rate=.95;speechSynthesis.speak(v)}
+const findApp=c=>{const p=' '+c+' ';return Object.keys(APPS).find(k=>APPS[k].alias.some(a=>p.includes(' '+a+' ')||p.includes(' '+a+'లో ')))};
+const VERB=/^(open|launch|start|install|update)\s|ఓపెన్|play ?store/;
+let installed=[],instAt=0;
+const nz=x=>x.toLowerCase().replace(/[^a-z0-9\u0C00-\u0C7F]+/g,'');
+const OPENEND=/\sopen(\s+chey\w*)?$|ఓపెన్/;
+function refreshInstalled(){if(!NAT)return;if(installed.length&&Date.now()-instAt<300000)return;try{installed=JSON.parse(NAT.getApps()).map(a=>({n:nz(a.n),l:a.n,p:a.p,np:nz(a.p)})).filter(a=>a.n.length>1);instAt=Date.now()}catch(e){}}
+function lev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=Array.from({length:n+1},(_,j)=>j);for(let i=1;i<=m;i++){const q=[i];for(let j=1;j<=n;j++)q[j]=Math.min(p[j]+1,q[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=q}return p[n]}
+function bestApp(name){refreshInstalled();const t=nz(name||'');if(t.length<2)return;let best,bs=0;for(const a of installed){let sc=0;if(a.n===t)sc=100;else if(t.length>=3&&(a.n.includes(t)||(a.n.length>=4&&t.includes(a.n))))sc=85-Math.abs(a.n.length-t.length);else if(t.length>=5&&a.np.includes(t))sc=78;else if(t.length>=4){const sim=1-lev(a.n,t)/Math.max(a.n.length,t.length);if(sim>=0.72)sc=sim*80}if(sc>bs){bs=sc;best=a}}return bs>=58?best:undefined}
+const findInstalled=c=>bestApp(c.replace(/^(open|launch|start)\s+/,'').replace(/\sopen(\s+chey\w*)?$/,'').replace(/\s(app|game)$/,''));
+const FILL=new Set(['start','open','launch','and','app','website','please','on','in','lo','ni','cheyyi','cheyyandi','cheyyu','chey','ఓపెన్','చేయి','చెయ్యి','లో','ని']);
+const SK=['search','find','vetuku','vedhuku','chupinchu','వెతుకు','వెతకండి','సెర్చ్'];
+function detectCommand(raw){
+const c=raw.toLowerCase().replace(/[.,!?]/g,'').trim();
+if(/^(open|launch)\s+google$/.test(c))return{action:'open',app:'chrome',query:''};
+let name=findApp(c);
+if(name){const al=APPS[name].alias;if(!(VERB.test(c)||al.some(a=>c.startsWith(a))||/\s(lo|in|on|and)\s/.test(c)))name=null}
+if(name){
+if(APPS[name].pkg&&/play ?store|install|update|ఇన్‌స్టాల్/.test(c))return{action:'store',app:name};
+let rest=c;APPS[name].alias.forEach(a=>{rest=rest.split(a).join(' ')});
+const hasS=SK.some(w=>c.includes(w))||/\slo\s/.test(c);
+const qm=c.match(/(?:search|find|play|vetuku|vedhuku|chupinchu)\s+(?:for\s+|the\s+)?(.+)$/);
+let q=qm?qm[1].split(/\s+/).filter(w=>w&&!FILL.has(w)&&w!=='the').join(' '):'';
+if(!q&&hasS)q=rest.split(/\s+/).filter(w=>w&&!FILL.has(w)&&!SK.includes(w)&&w!=='the').join(' ');
+APPS[name].alias.forEach(a=>{q=q.split(a).join(' ')});
+return{action:'open',app:name,query:q.replace(/\s+(on|in)\s*$/,'').replace(/\s+/g,' ').trim()}}
+if(VERB.test(c)||OPENEND.test(c)){const a=findInstalled(c);if(a)return{action:'open',pkg:a.p,label:a.l,query:''}}
+const g=c.match(/^(open|launch|start)\s+(.+)$/);if(g&&!/\s(and|lo|in)\s+search/.test(c))return{action:'store',app:'',query:g[2]};
+return{action:'search',query:raw.trim().replace(/^(search|find)\s+(for\s+)?/i,'')||raw.trim()}}
+const SYS='You are NAVOX AI, a personal AI agent built by Naveen Kumar. Naveen Kumar is your owner and creator. Always introduce yourself as NAVOX AI. When asked who made, built, owns or created you, answer: I am NAVOX AI, built by Naveen. Never describe yourself as a large language model trained by Google or any other company, and never claim to be human. If someone sincerely asks which AI model runs underneath, say you are NAVOX AI built by Naveen and that you use a third-party language model, without more detail. Be concise. Understand English, Telugu and Tanglish (Telugu in English letters). Reply ONLY with JSON: {"action":"chat|open|search|store","app":"'+Object.keys(APPS).join('|')+'|","query":"","reply":"short reply in the user\'s language"}. chat = answer directly in reply. open = open app, optional query to search inside it. search = Google search. store = Play Store page of app. If the app is not in the list, use action store with query = the app name.';
+async function askAI(raw){
+const msgs=history.filter(h=>h.type==='user'||h.meta.startsWith('AI')||h.meta.startsWith('Action')).slice(-8).map(h=>({role:h.type==='user'?'user':'assistant',content:h.text}));
+const r=await fetch(PROXY||'https://api.anthropic.com/v1/messages',{method:'POST',headers:PROXY?{'content-type':'application/json','x-app-token':PTOKEN}:{'content-type':'application/json','x-api-key':store.get('nvx_key'),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-5-5',max_tokens:600,system:SYS,messages:msgs.concat([{role:'user',content:raw}]).filter((m,i,a)=>i===0||m.role!==a[i-1].role)})});
+const d=await r.json();if(!r.ok)throw new Error(d.error?.message||r.status);
+const t=(d.content||[]).map(x=>x.text||'').join('').replace(/```json|```/g,'').trim();
+try{return JSON.parse(t)}catch(e){return{action:'chat',reply:t}}}
+function act(c){
+let url,label,reply=c.reply,real=c.pkg||'';
+if(NAT){
+if(c.action==='open'&&c.app&&!APPS[c.app]){const b=bestApp(c.app);if(b){real=b.p;c.label=b.l}}
+if(c.action==='store'&&!APPS[c.app]&&c.query){const b=bestApp(c.query);if(b){c={action:'open',label:b.l,query:''};real=b.p}}
+const K=APPS[c.app];
+if(c.action==='open'&&K&&K.pkg){refreshInstalled();real=(!installed.length||installed.some(a=>a.p===K.pkg))?K.pkg:((bestApp(K.alias[0])||{}).p||'');if(!real)c={action:'store',app:c.app,nf:1}}
+if(c.action==='open'&&real&&!c.query){const n=c.label||c.app||real;if(NAT.launch(real)){const m=reply||'Opening '+n+'.';addMessage(m,'agent','Action · '+n);speak(m);status.textContent='Opened '+n+' ✓';return}c={action:'store',app:c.app,query:n,nf:1}}
+}
+const A=APPS[c.app];
+if(c.action==='chat'){addMessage(reply||'…','agent','AI reply');speak(reply);status.textContent='Ready when you are · Enter to send';return}
+if(c.action==='store'&&A&&A.pkg){url='https://play.google.com/store/apps/details?id='+A.pkg;label='Play Store';reply=reply||(c.nf?c.app+' isn\'t installed on this phone. Opening Play Store.':'Opening '+c.app+' on Play Store.')}
+else if(c.action==='store'||(c.action==='open'&&c.app&&!A)){const n=c.query||c.app;url='https://play.google.com/store/search?q='+encodeURIComponent(n)+'&c=apps';label='Play Store';reply=reply||(NAT?'I couldn\'t find "'+n+'" on this phone, so I\'m opening Play Store.':'Opening Play Store search for '+n+'.')}
+else if(c.action==='open'&&A){const qf=A.q||(x=>G(encodeURIComponent(c.app+' ')+x));url=(!c.query&&isAndroid&&A.pkg)?launch(A.pkg,A.home):link(c.query?qf(encodeURIComponent(c.query)):A.home,A.pkg);label=c.app;reply=reply||(c.query?'Opening '+c.app+' and searching '+c.query+'.':'Opening '+c.app+'.')}
+else{const q=c.query||'';url=G(encodeURIComponent(q));label='Google search';reply=reply||'Searching the web for '+q+'.'}
+addMessage(reply,'agent','Action · '+label,url);speak(reply);
+const pk=label==='Play Store'?'':(real||(A&&A.pkg&&c.action==='open'?A.pkg:''));
+const w=NAT?NAT.openUrl(url,pk):window.open(url,'_blank');status.textContent=w?'Opened '+label+' ✓':'Tap Open to continue'}
+const DUR=/(\d+)\s*(sec\w*|సెక\w*|min\w*|నిమిష\w*|nimish\w*|hour\w*|hr\w*|gant\w*|గంట\w*)/;
+const notes={get(){try{return JSON.parse(store.get('nvx_notes')||'[]')}catch(e){return[]}},set(a){store.set('nvx_notes',JSON.stringify(a))}};
+function nativeCmd(raw){
+const r=raw.trim(),c=r.toLowerCase().replace(/[,!?]/g,'');let m;
+const on=!/\b(off|band|aapu)\b|ఆఫ్/.test(c);
+if(/^(help|commands)$/.test(c))return{action:'help'};
+if(/torch|flash ?light|టార్చ్|ఫ్లాష్/.test(c))return{action:'torch',on};
+if(m=c.match(/(?:^|\s)(?:call|dial|కాల్)\s*(\+?\d[\d\s-]{2,})/))return{action:'call',num:m[1].replace(/[\s-]/g,'')};
+if(m=c.match(/^(?:sms|text|message|msg)\s+(\+?\d[\d-]{5,})\s*(?:saying|that|:)?\s*(.*)$/))return{action:'sms',num:m[1].replace(/-/g,''),body:m[2]};
+if(/timer|టైమర్|remind/.test(c)&&(m=c.match(DUR))){const n=+m[1],u=m[2],sec=n*(/^(s|స)/.test(u)?1:/^(h|g|గ)/.test(u)?3600:60);const l=(c.match(/\d+\s*\S+\s+(?:to|ki)\s+(.+)$/)||c.match(/remind(?: me)?(?: to| about)?\s+(.+?)\s+(?:in|after)\s+\d/)||[])[1];return{action:'timer',sec,label:l||'NAVOX'}}
+if(/alarm|అలారం|wake me/.test(c)&&(m=c.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/))){let h=+m[1];const mi=+(m[2]||0),p=m[3];if(p==='pm'&&h<12)h+=12;if(p==='am'&&h===12)h=0;if(h<24&&mi<60)return{action:'alarm',h,mi,label:'NAVOX'}}
+const S={wifi:/wi-?fi|వైఫై/,bluetooth:/bluetooth|బ్లూటూత్/,location:/location settings|gps/,display:/brightness|display/,sound:/volume|sound settings/,airplane:/airplane|flight mode/,battery:/battery saver|battery settings/};
+if(c.split(/\s+/).length<=5&&!/(how|what|why|password)/.test(c))for(const k in S)if(S[k].test(c))return{action:'settings',which:k};
+if(/^(open |launch )?settings$/.test(c))return{action:'settings',which:'settings'};
+if((m=c.match(/^play\s+(.+?)\s+(?:on|in)\s+(?:youtube|you tube)$/)))return{action:'play',query:m[1],yt:true};
+if(!/play ?store/.test(c)&&((m=c.match(/^play\s+(.+)$/))||(m=c.match(/^(.+?)\s+play(?:\s+chey\w*)?$/))))return{action:'play',query:m[1]};
+if(m=r.match(/^(?:note down|save note|note|remember)\s*[:\-]?\s+(.+)$/i))return{action:'note',text:m[1]};
+if(/^(show |my |list )?notes$/.test(c))return{action:'notes'};
+if(/^clear notes$/.test(c))return{action:'clearnotes'};
+if(c.length<26&&(/\b(time|date|samayam)\b/.test(c)||/టైమ్|సమయం/.test(c)))return{action:'time'}}
+function say(m,meta){addMessage(m,'agent',meta||'Action');speak(m);status.textContent='Ready when you are · Enter to send'}
+function doNative(c){
+const A=c.action;
+if(A==='help')return say('Try: open <any app> · call 100 · sms 9876543210 hello · alarm 7 am · timer 10 minutes · remind me to call mom in 10 minutes · flashlight on/off · wifi · play <song> · note <text> · notes · time','Help');
+if(A==='notes'){const n=notes.get();return say(n.length?n.map((x,i)=>(i+1)+'. '+x).join('\n'):'No notes yet. Say: note buy milk','Notes')}
+if(A==='note'){const n=notes.get();n.push(c.text);notes.set(n);return say('Saved note: '+c.text,'Notes')}
+if(A==='clearnotes'){notes.set([]);return say('All notes cleared.','Notes')}
+if(A==='time')return say(new Date().toLocaleString('en-IN',{dateStyle:'full',timeStyle:'short'}),'Time');
+if(A==='play'){if(c.yt)return act({action:'open',app:'youtube',query:c.query});if(NAT&&NAT.play(c.query))return say('Playing '+c.query+'.','Music');return act({action:'open',app:'youtube',query:c.query})}
+if(!NAT){if(A==='call'){window.open('tel:'+c.num);return say('Opening dialer.')}if(A==='sms'){window.open('sms:'+c.num+'?body='+encodeURIComponent(c.body||''));return say('Opening messages.')}return say('This works only in the NAVOX Android app.','System')}
+let ok=false,m='';
+if(A==='torch'){ok=NAT.torch(c.on);m='Flashlight '+(c.on?'on':'off')+'.'}
+else if(A==='call'){ok=NAT.dial(c.num);m='Dialer opened for '+c.num+'.'}
+else if(A==='sms'){ok=NAT.sms(c.num,c.body||'');m='Message ready for '+c.num+'. Tap send.'}
+else if(A==='alarm'){ok=NAT.alarm(c.h,c.mi,c.label);m='Alarm set for '+String(c.h).padStart(2,'0')+':'+String(c.mi).padStart(2,'0')+'.'}
+else if(A==='timer'){ok=NAT.timer(c.sec,c.label);m='Timer set for '+Math.round(c.sec/6)/10+' min'+(c.label!=='NAVOX'?' · '+c.label:'')+'.'}
+else if(A==='settings'){ok=NAT.settings(c.which);m='Opening '+c.which+' settings.'}
+say(ok?m:'Could not do that on this phone.','Action')}
+let aiBlock=0;
+async function runCommand(){
+const raw=input.value.trim();if(!raw)return;input.value='';addMessage(raw,'user');status.textContent='Understanding your request…';
+const ID=[/\b(your|ur)\s+(owner|creator|developer|maker|founder|boss|name)\b/i,/\bwho\s+(made|built|created|developed|owns|designed|invented)\s+(you|u)\b/i,/\bwho\s+(are|r)\s+(you|u)\b/i,/\b(nee|ni|nuvvu)\s+(owner|creator|peru|developer)\b/i,/\bninnu\s+evaru\b/i];
+if(ID.some(x=>x.test(raw))||/\b(what|who)\s*(is|s)\s+(naveen|navin|naveen kumar)\b/i.test(raw)){let ans='I am NAVOX AI, built by Naveen Kumar.';if(/\b(owner|boss)\b/i.test(raw))ans='My owner is Naveen Kumar.';else if(/\b(creator|developer|maker|founder)\b|who\s+(made|built|created|developed|designed|invented)/i.test(raw))ans='I was built by Naveen Kumar, my owner.';else if(/\b(what|who)\s*(is|s)\s+(naveen|navin|naveen kumar)\b/i.test(raw))ans='Naveen Kumar is my owner and creator.';say(ans,'NAVOX');return}
+if(NAT&&NAT.exec){let r='';try{r=NAT.exec(raw)}catch(e){}if(r){say(r);return}}
+const nc=nativeCmd(raw);if(nc){doNative(nc);return}
+if(NAT&&NAT.agent&&PROXY){const qn=/^(what|who|whom|whose|why|how|when|where|which|explain|tell me|define|is|are|can|do|does|meaning|translate)\b/i.test(raw.trim())||/\?\s*$/.test(raw);const simple=/^(open|launch|start)\s/i.test(raw.trim())&&raw.trim().split(/\s+/).length<=4;if(!qn&&!simple){say(NAT.agent(raw),'Agent');return}}
+const dc=detectCommand(raw);
+const sure=dc.action==='open'||(dc.action==='store'&&dc.nf);
+let cmd=null;
+if(!sure&&(PROXY||store.get('nvx_key'))&&Date.now()>aiBlock){try{cmd=await askAI(raw)}catch(e){const m=String(e.message||e);if(/quota|exceeded|rate|429/i.test(m)){aiBlock=Date.now()+3600000;addMessage('Gemini free limit reached for now. Basic commands still work.','agent','System')}else addMessage('AI error: '+m.slice(0,140)+' — using basic mode.','agent','System')}}
+act(cmd||dc)}
+function showListen(){$('listen').classList.add('show')}
+function hideListen(){$('listen').classList.remove('show')}
+function stopVoice(){if(rec)rec.stop();hideListen()}
+function runPreset(t){input.value=t;runCommand()}
+function fillCommand(t){input.value=t;input.focus();sidebar.classList.remove('open')}
+function focusInput(){input.focus();sidebar.classList.remove('open')}
+function newChat(){history=[];save();messages.innerHTML=WELCOME;status.textContent='Ready when you are · Enter to send';sidebar.classList.remove('open');input.focus()}
+function showInfo(){addMessage('NAVOX AI is a browser-based agent preview. With an API key it understands natural language (English/Telugu); without one it uses basic commands. It opens websites and Android apps, and runs web searches.','agent','About NAVOX');sidebar.classList.remove('open')}
+function setKey(){const k=prompt('Paste your Anthropic API key to enable AI mode (saved only on this device). Leave empty to remove it:','');if(k===null)return;sidebar.classList.remove('open');if(k.trim()){store.set('nvx_key',k.trim());addMessage('AI mode enabled.','agent','System')}else{store.del('nvx_key');addMessage('AI mode off. Basic commands only.','agent','System')}}
+function startVoice(){
+showListen();
+if(NAT){status.textContent='Listening…';NAT.listen(lang);return}
+if(rec){rec.stop();return}
+const S=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!S){hideListen();addMessage('Voice recognition is not available in this browser. Try Chrome.','agent','System');return}
+const r=rec=new S();r.lang=lang;r.interimResults=false;
+r.onstart=()=>{mic.classList.add('active');mic.textContent='■';input.placeholder='Listening…';status.textContent='Listening… tap ■ to stop'};
+r.onresult=e=>{hideListen();input.value=e.results[0][0].transcript;runCommand()};
+r.onerror=e=>{hideListen();addMessage(e.error==='not-allowed'?'Microphone permission denied. Allow it in Chrome settings.':'I could not understand the voice command.','agent','System')};
+r.onend=()=>{hideListen();rec=null;mic.classList.remove('active');mic.innerHTML=MIC_SVG;input.placeholder='Message NAVOX...'};
+try{r.start()}catch(e){rec=null}}
+function setLang(){$('langBtn').textContent=lang==='te-IN'?'తె':'EN'}
+$('langBtn').onclick=()=>{lang=lang==='te-IN'?'en-IN':'te-IN';store.set('nvx_lang',lang);if(NAT)NAT.setLang(lang);setLang();status.textContent='Voice language: '+(lang==='te-IN'?'Telugu':'English')};
+setLang();
+$('send').onclick=runCommand;mic.onclick=startVoice;
+input.addEventListener('keydown',e=>{if(e.key==='Enter')runCommand()});
+$('menuBtn').onclick=()=>sidebar.classList.toggle('open');
+document.querySelector('.main').addEventListener('click',e=>{if(!e.target.closest('#menuBtn'))sidebar.classList.remove('open')});
+if(NAT&&NAT.setAgent)NAT.setAgent(PROXY,PTOKEN);status.textContent='NAVOX v8 · fast human voice';window.onAgentSay=t=>say(t,'NAVOX');
+window.onNativeVoice=t=>{hideListen();input.value=t;runCommand()};window.onNativeVoiceError=()=>{hideListen();status.textContent='Could not hear you. Tap the mic and try again.'};
+const STEPS=[['mic','Microphone (required)','askMic'],['notif','Notifications','askNotif'],['battery','Battery: Unrestricted','askBattery'],['overlay','Display over other apps','askOverlay'],['access','Accessibility (Wi-Fi, screenshot)','askAccess']];
+function setupState(){try{return JSON.parse(NAT.setupStatus())}catch(e){return{}}}
+function renderSetup(){const s=setupState();$('steps').innerHTML=STEPS.map(x=>'<div class="step"><span>'+(s[x[0]]?'✅ ':'⬜ ')+x[1]+'</span>'+(s[x[0]]?'':'<button class="open-btn" onclick="NAT.'+x[2]+'()">Allow</button>')+'</div>').join('');const b=$('wakeBtn');b.textContent=s.listening?'Stop Hey Nav':'Start Hey Nav';b.disabled=!s.mic&&!s.listening;b.style.opacity=b.disabled?.4:1}
+function openSetup(){sidebar.classList.remove('open');if(!NAT){return say('Hey Nav works only in the NAVOX Android app.','System')}$('sheet').classList.add('show');renderSetup()}
+function closeSetup(){$('sheet').classList.remove('show')}
+$('wakeBtn').onclick=()=>{const s=setupState();if(s.listening)NAT.stopListening();else{NAT.setLang(lang);NAT.startListening()}setTimeout(renderSetup,600)};
+window.onNativeResume=()=>{if($('sheet').classList.contains('show'))renderSetup()};
+window.onWakeCommand=t=>{input.value=t;runCommand()};
+if(NAT){NAT.setLang(lang);if(!store.get('nvx_setup')){store.set('nvx_setup','1');setTimeout(openSetup,700)}}
+history.forEach(h=>addMessage(h.text,h.type,h.meta,h.url,false));
+</script>
+</body>
+</html>
+@@@FILE app/src/main/res/xml/accessibility_config.xml
+<?xml version="1.0" encoding="utf-8"?>
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagIncludeNotImportantViews"
+    android:canRetrieveWindowContent="true"
+    android:canPerformGestures="true"
+    android:notificationTimeout="100"
+    android:description="@string/a11y_desc"/>
+@@@FILE app/src/main/java/com/navox/agent/MainActivity.java
+package com.navox.agent;
+
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.PowerManager;
+import android.speech.RecognizerIntent;
+import android.app.SearchManager;
+import android.content.Context;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
+import android.provider.AlarmClock;
+import android.provider.MediaStore;
+import android.provider.Settings;
+import android.view.View;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.util.ArrayList;
+
+public class MainActivity extends Activity {
+    WebView web;
+    String pendingCmd;
+    boolean loaded = false;
+    static final int VOICE = 1;
+
+    @Override
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        getWindow().setStatusBarColor(Color.parseColor("#FCFBF8"));
+        getWindow().setNavigationBarColor(Color.parseColor("#FCFBF8"));
+        int uiFlags = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        if (Build.VERSION.SDK_INT >= 26) uiFlags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+        getWindow().getDecorView().setSystemUiVisibility(uiFlags);
+        web = new WebView(this);
+        web.setBackgroundColor(Color.parseColor("#FCFBF8"));
+        setContentView(web);
+        WebSettings s = web.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setAllowFileAccess(true);
+        s.setAllowUniversalAccessFromFileURLs(true);
+        s.setMediaPlaybackRequiresUserGesture(false);
+        web.addJavascriptInterface(new Bridge(), "NAVOX");
+        web.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest r) {
+                String u = r.getUrl().toString();
+                if (u.startsWith("file:")) return false;
+                openUrl(u, "");
+                return true;
+            }
+
+            @Override
+            public void onPageFinished(WebView v, String url) {
+                loaded = true;
+                deliverCmd();
+            }
+        });
+        pendingCmd = getIntent().getStringExtra("cmd");
+        AgentRunner.listener = new AgentRunner.Listener() {
+            public void onSay(String s) {
+                js("window.onAgentSay&&window.onAgentSay(" + JSONObject.quote(s) + ")");
+            }
+        };
+        new Thread(new Runnable() {
+            public void run() {
+                CommandRunner.loadApps(MainActivity.this);
+            }
+        }).start();
+        if (getSharedPreferences("navox", 0).getBoolean("wake", false) && !ListenService.running) {
+            new Bridge().startListening();
+        }
+        web.loadUrl("file:///android_asset/index.html");
+    }
+
+    boolean openUrl(String url, String pkg) {
+        boolean hasPkg = pkg != null && !pkg.isEmpty();
+        try {
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            if (hasPkg) i.setPackage(pkg);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+            return true;
+        } catch (Exception e) {
+            return hasPkg && openUrl(url, "");
+        }
+    }
+
+    boolean start(Intent i) {
+        try {
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    void js(String code) {
+        web.evaluateJavascript(code, null);
+    }
+
+    void deliverCmd() {
+        if (loaded && pendingCmd != null) {
+            js("window.onWakeCommand&&window.onWakeCommand(" + JSONObject.quote(pendingCmd) + ")");
+            pendingCmd = null;
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent i) {
+        super.onNewIntent(i);
+        setIntent(i);
+        String c = i.getStringExtra("cmd");
+        if (c != null) {
+            pendingCmd = c;
+            deliverCmd();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        js("window.onNativeResume&&window.onNativeResume()");
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int rq, String[] p, int[] r) {
+        super.onRequestPermissionsResult(rq, p, r);
+        js("window.onNativeResume&&window.onNativeResume()");
+    }
+
+    class Bridge {
+        @JavascriptInterface
+        public boolean launch(String pkg) {
+            try {
+                PackageManager pm = getPackageManager();
+                Intent i = pm.getLaunchIntentForPackage(pkg);
+                if (i == null) {
+                    Intent q = new Intent(Intent.ACTION_MAIN);
+                    q.addCategory(Intent.CATEGORY_LAUNCHER);
+                    q.setPackage(pkg);
+                    java.util.List<ResolveInfo> l = pm.queryIntentActivities(q, 0);
+                    if (l.isEmpty()) return false;
+                    i = new Intent(Intent.ACTION_MAIN);
+                    i.addCategory(Intent.CATEGORY_LAUNCHER);
+                    i.setClassName(pkg, l.get(0).activityInfo.name);
+                }
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        @JavascriptInterface
+        public boolean openUrl(String url, String pkg) {
+            return MainActivity.this.openUrl(url, pkg);
+        }
+
+        @JavascriptInterface
+        public boolean dial(String n) {
+            return start(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + Uri.encode(n))));
+        }
+
+        @JavascriptInterface
+        public boolean sms(String n, String body) {
+            Intent i = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + Uri.encode(n)));
+            i.putExtra("sms_body", body);
+            return start(i);
+        }
+
+        @JavascriptInterface
+        public boolean alarm(int h, int m, String label) {
+            Intent i = new Intent(AlarmClock.ACTION_SET_ALARM);
+            i.putExtra(AlarmClock.EXTRA_HOUR, h);
+            i.putExtra(AlarmClock.EXTRA_MINUTES, m);
+            i.putExtra(AlarmClock.EXTRA_MESSAGE, label);
+            i.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+            return start(i);
+        }
+
+        @JavascriptInterface
+        public boolean timer(int sec, String label) {
+            Intent i = new Intent(AlarmClock.ACTION_SET_TIMER);
+            i.putExtra(AlarmClock.EXTRA_LENGTH, sec);
+            i.putExtra(AlarmClock.EXTRA_MESSAGE, label);
+            i.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+            return start(i);
+        }
+
+        @JavascriptInterface
+        public boolean settings(String w) {
+            String a = Settings.ACTION_SETTINGS;
+            if (w.equals("wifi")) a = Settings.ACTION_WIFI_SETTINGS;
+            else if (w.equals("bluetooth")) a = Settings.ACTION_BLUETOOTH_SETTINGS;
+            else if (w.equals("location")) a = Settings.ACTION_LOCATION_SOURCE_SETTINGS;
+            else if (w.equals("display")) a = Settings.ACTION_DISPLAY_SETTINGS;
+            else if (w.equals("sound")) a = Settings.ACTION_SOUND_SETTINGS;
+            else if (w.equals("airplane")) a = Settings.ACTION_AIRPLANE_MODE_SETTINGS;
+            else if (w.equals("battery")) a = Settings.ACTION_BATTERY_SAVER_SETTINGS;
+            return start(new Intent(a));
+        }
+
+        @JavascriptInterface
+        public boolean play(String q) {
+            Intent i = new Intent(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH);
+            i.putExtra(SearchManager.QUERY, q);
+            i.putExtra(MediaStore.EXTRA_MEDIA_FOCUS, "vnd.android.cursor.item/*");
+            return start(i);
+        }
+
+        @JavascriptInterface
+        public boolean torch(boolean on) {
+            try {
+                CameraManager cm = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+                for (String id : cm.getCameraIdList()) {
+                    Boolean f = cm.getCameraCharacteristics(id).get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+                    if (f != null && f) {
+                        cm.setTorchMode(id, on);
+                        return true;
+                    }
+                }
+            } catch (Exception e) { }
+            return false;
+        }
+
+        @JavascriptInterface
+        public String setupStatus() {
+            JSONObject o = new JSONObject();
+            try {
+                o.put("mic", checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED);
+                o.put("notif", Build.VERSION.SDK_INT < 33 || checkSelfPermission("android.permission.POST_NOTIFICATIONS") == PackageManager.PERMISSION_GRANTED);
+                PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                o.put("battery", pm.isIgnoringBatteryOptimizations(getPackageName()));
+                o.put("overlay", Settings.canDrawOverlays(MainActivity.this));
+                o.put("listening", ListenService.running);
+                o.put("access", NavoxAccess.inst != null);
+            } catch (Exception e) { }
+            return o.toString();
+        }
+
+        @JavascriptInterface
+        public void askMic() {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 2);
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void askNotif() {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    if (Build.VERSION.SDK_INT >= 33) requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 3);
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void askBattery() {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    start(new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:" + getPackageName())));
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void askOverlay() {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    start(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())));
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void setLang(String l) {
+            getSharedPreferences("navox", 0).edit().putString("lang", l).apply();
+        }
+
+        @JavascriptInterface
+        public boolean startListening() {
+            try {
+                if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) return false;
+                getSharedPreferences("navox", 0).edit().putBoolean("wake", true).apply();
+                Intent s = new Intent(MainActivity.this, ListenService.class);
+                if (Build.VERSION.SDK_INT >= 26) startForegroundService(s); else startService(s);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        @JavascriptInterface
+        public boolean stopListening() {
+            getSharedPreferences("navox", 0).edit().putBoolean("wake", false).apply();
+            return stopService(new Intent(MainActivity.this, ListenService.class));
+        }
+
+        @JavascriptInterface
+        public String agent(String goal) {
+            return AgentRunner.start(MainActivity.this, goal);
+        }
+
+        @JavascriptInterface
+        public void speak(String text, String lang) {
+            Voice.speak(MainActivity.this, text, lang);
+        }
+
+        @JavascriptInterface
+        public void stopSpeak() {
+            Voice.stop();
+        }
+
+        @JavascriptInterface
+        public void setAgent(String url, String token) {
+            getSharedPreferences("navox", 0).edit().putString("proxy", url).putString("ptoken", token).apply();
+        }
+
+        @JavascriptInterface
+        public String exec(String text) {
+            String r = CommandRunner.run(MainActivity.this, text);
+            return r == null ? "" : r;
+        }
+
+        @JavascriptInterface
+        public void askAccess() {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    start(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public String getApps() {
+            JSONArray a = new JSONArray();
+            try {
+                PackageManager pm = getPackageManager();
+                Intent q = new Intent(Intent.ACTION_MAIN);
+                q.addCategory(Intent.CATEGORY_LAUNCHER);
+                for (ResolveInfo r : pm.queryIntentActivities(q, 0)) {
+                    JSONObject o = new JSONObject();
+                    o.put("n", r.loadLabel(pm).toString());
+                    o.put("p", r.activityInfo.packageName);
+                    a.put(o);
+                }
+            } catch (Exception e) { }
+            return a.toString();
+        }
+
+        @JavascriptInterface
+        public void listen(final String lang) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    try {
+                        Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, lang);
+                        startActivityForResult(i, VOICE);
+                    } catch (Exception e) {
+                        js("window.onNativeVoiceError&&window.onNativeVoiceError()");
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int rq, int rs, Intent d) {
+        super.onActivityResult(rq, rs, d);
+        if (rq != VOICE) return;
+        if (rs == RESULT_OK && d != null) {
+            ArrayList<String> l = d.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (l != null && !l.isEmpty()) {
+                js("window.onNativeVoice(" + JSONObject.quote(l.get(0)) + ")");
+                return;
+            }
+        }
+        js("window.onNativeVoiceError&&window.onNativeVoiceError()");
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (web.canGoBack()) web.goBack(); else super.onBackPressed();
+    }
+}
+@@@FILE app/src/main/java/com/navox/agent/ListenService.java
+package com.navox.agent;
+
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ServiceInfo;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.PowerManager;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
+import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class ListenService extends Service implements RecognitionListener {
+    static boolean running = false;
+    static final Pattern WAKE = Pattern.compile("\\b(hey|hi|hello|ok|okay)\\s+(nav|navv|navox|naav|nova|knox|knave|nave)\\b");
+    SpeechRecognizer sr;
+    Handler h = new Handler(Looper.getMainLooper());
+    PowerManager.WakeLock wl;
+    WakeEngine wake;
+    boolean vosk = false;
+    boolean commandMode = false;
+    boolean dead = false;
+    Runnable again = new Runnable() {
+        public void run() {
+            listen();
+        }
+    };
+    Runnable resumeR = new Runnable() {
+        public void run() {
+            if (vosk && wake != null) wake.resume();
+        }
+    };
+
+    @Override
+    public IBinder onBind(Intent i) {
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent i, int flags, int id) {
+        if (i != null && "stop_agent".equals(i.getAction())) {
+            AgentRunner.cancel();
+            return START_STICKY;
+        }
+        startFg();
+        running = true;
+        if (wl == null) {
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "navox:listen");
+            wl.acquire();
+        }
+        new Thread(new Runnable() {
+            public void run() {
+                CommandRunner.loadApps(ListenService.this);
+            }
+        }).start();
+        if (wake == null) {
+            vosk = true;
+            wake = new WakeEngine(this, new WakeEngine.Callback() {
+                public void onReady() {
+                    Toast.makeText(ListenService.this, "Hey Nav is ready", Toast.LENGTH_SHORT).show();
+                }
+
+                public void onWake() {
+                    onWakeWord();
+                }
+
+                public void onFail() {
+                    voskFailed();
+                }
+            });
+            wake.init();
+        }
+        return START_STICKY;
+    }
+
+    void voskFailed() {
+        if (!vosk) return;
+        vosk = false;
+        if (wake != null) {
+            wake.destroy();
+            wake = null;
+        }
+        Toast.makeText(this, "Using basic Hey Nav mode", Toast.LENGTH_SHORT).show();
+        next(100);
+    }
+
+    void onWakeWord() {
+        if (!vosk || commandMode || wake == null) return;
+        commandMode = true;
+        h.removeCallbacks(again);
+        h.post(again);
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    wake.pause();
+                } catch (Exception e) { }
+            }
+        }).start();
+    }
+
+    void startFg() {
+        String ch = "navox_listen";
+        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= 26) {
+            nm.createNotificationChannel(new NotificationChannel(ch, "NAVOX listening", NotificationManager.IMPORTANCE_LOW));
+        }
+        Intent open = new Intent(this, MainActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, open, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification.Builder b;
+        if (Build.VERSION.SDK_INT >= 26) b = new Notification.Builder(this, ch);
+        else b = new Notification.Builder(this);
+        b.setContentTitle("NAVOX is listening");
+        b.setContentText("Say Hey Nav, then your command");
+        b.setSmallIcon(R.drawable.ic_notif);
+        b.setContentIntent(pi);
+        b.setOngoing(true);
+        Intent stop = new Intent(this, ListenService.class);
+        stop.setAction("stop_agent");
+        PendingIntent sp = PendingIntent.getService(this, 1, stop, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        b.addAction(0, "Stop agent", sp);
+        Notification n = b.build();
+        if (Build.VERSION.SDK_INT >= 30) startForeground(1, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
+        else startForeground(1, n);
+    }
+
+    void next(long ms) {
+        h.removeCallbacks(again);
+        h.postDelayed(again, ms);
+    }
+
+    void after(long ms) {
+        if (vosk) {
+            commandMode = false;
+            h.removeCallbacks(again);
+            h.removeCallbacks(resumeR);
+            h.postDelayed(resumeR, ms);
+        } else {
+            next(ms);
+        }
+    }
+
+    void listen() {
+        if (dead) return;
+        try {
+            if (sr != null) sr.destroy();
+            sr = SpeechRecognizer.createSpeechRecognizer(this);
+            sr.setRecognitionListener(this);
+            Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, getSharedPreferences("navox", 0).getString("lang", "en-IN"));
+            i.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
+            i.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 800L);
+            i.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 600L);
+            sr.startListening(i);
+        } catch (Exception e) {
+            after(3000);
+        }
+    }
+
+    void beep() {
+        try {
+            new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 80).startTone(ToneGenerator.TONE_PROP_BEEP, 150);
+        } catch (Exception e) { }
+    }
+
+    void fire(String cmd) {
+        String r = null;
+        try {
+            r = CommandRunner.run(this, cmd);
+        } catch (Exception e) { }
+        if (r != null) {
+            Toast.makeText(this, r, Toast.LENGTH_SHORT).show();
+            Voice.speak(this, r, "en-IN");
+            after(1500);
+            return;
+        }
+        if (AgentRunner.canRun(this, cmd)) {
+            String sm = AgentRunner.start(this, cmd);
+            Toast.makeText(this, sm, Toast.LENGTH_SHORT).show();
+            Voice.speak(this, sm, "en-IN");
+            after(2000);
+            return;
+        }
+        try {
+            Intent i = new Intent(this, MainActivity.class);
+            i.putExtra("cmd", cmd);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
+        } catch (Exception e) { }
+        after(6000);
+    }
+
+    @Override
+    public void onResults(Bundle b) {
+        ArrayList<String> l = b.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+        if (l == null || l.isEmpty()) {
+            after(250);
+            return;
+        }
+        if (commandMode) {
+            commandMode = false;
+            fire(l.get(0).toLowerCase());
+            return;
+        }
+        if (vosk) {
+            after(250);
+            return;
+        }
+        for (String a : l) {
+            String t = a.toLowerCase();
+            Matcher m = WAKE.matcher(t);
+            if (m.find()) {
+                String rest = t.substring(m.end()).trim();
+                if (rest.length() > 1) {
+                    fire(rest);
+                } else {
+                    commandMode = true;
+                    beep();
+                    next(200);
+                }
+                return;
+            }
+        }
+        next(200);
+    }
+
+    @Override
+    public void onError(int e) {
+        if (e == SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS) {
+            stopSelf();
+            return;
+        }
+        if (vosk) {
+            after(e == SpeechRecognizer.ERROR_RECOGNIZER_BUSY ? 2000 : 300);
+            return;
+        }
+        commandMode = false;
+        if (e == SpeechRecognizer.ERROR_RECOGNIZER_BUSY) next(2000);
+        else if (e == SpeechRecognizer.ERROR_NO_MATCH || e == SpeechRecognizer.ERROR_SPEECH_TIMEOUT) next(250);
+        else next(1500);
+    }
+
+    @Override public void onReadyForSpeech(Bundle p) {
+        if (commandMode) beep();
+    }
+    @Override public void onBeginningOfSpeech() { }
+    @Override public void onRmsChanged(float v) { }
+    @Override public void onBufferReceived(byte[] b) { }
+    @Override public void onEndOfSpeech() { }
+    @Override public void onPartialResults(Bundle b) { }
+    @Override public void onEvent(int t, Bundle b) { }
+
+    @Override
+    public void onDestroy() {
+        dead = true;
+        running = false;
+        h.removeCallbacks(again);
+        h.removeCallbacks(resumeR);
+        if (wake != null) wake.destroy();
+        try {
+            if (sr != null) sr.destroy();
+        } catch (Exception e) { }
+        if (wl != null && wl.isHeld()) wl.release();
+        super.onDestroy();
+    }
+}
+@@@FILE app/src/main/java/com/navox/agent/CommandRunner.java
+package com.navox.agent;
+
+import android.accessibilityservice.AccessibilityService;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
+import android.media.AudioManager;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.AlarmClock;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class CommandRunner {
+    static class App {
+        String label, n, pkg, np;
+    }
+
+    static volatile List<App> APPS = new ArrayList<App>();
+    static long loadedAt = 0;
+    static final Map<String, String> ALIAS = new HashMap<String, String>();
+
+    static {
+        ALIAS.put("insta", "instagram");
+        ALIAS.put("fb", "facebook");
+        ALIAS.put("yt", "youtube");
+        ALIAS.put("wa", "whatsapp");
+        ALIAS.put("gpay", "googlepay");
+        ALIAS.put("ff", "freefire");
+        ALIAS.put("ffmax", "freefiremax");
+    }
+
+    static final Map<String, String> SAPP = new HashMap<String, String>();
+
+    static {
+        String[][] a = {{"youtube", "youtube"}, {"you tube", "youtube"}, {"instagram", "instagram"}, {"insta", "instagram"},
+                {"telegram", "telegram"}, {"whatsapp", "whatsapp"}, {"whats app", "whatsapp"}, {"google maps", "maps"},
+                {"maps", "maps"}, {"spotify", "spotify"}, {"amazon", "amazon"}, {"flipkart", "flipkart"},
+                {"play store", "playstore"}, {"playstore", "playstore"}, {"twitter", "twitter"}, {"reddit", "reddit"},
+                {"facebook", "facebook"}, {"google", "chrome"}, {"chrome", "chrome"}};
+        for (String[] x : a) SAPP.put(x[0], x[1]);
+    }
+
+    static String norm(String s) {
+        return s == null ? "" : s.toLowerCase().replaceAll("[^a-z0-9\\p{IsTelugu}]+", "");
+    }
+
+    static void loadApps(Context c) {
+        try {
+            PackageManager pm = c.getPackageManager();
+            Intent q = new Intent(Intent.ACTION_MAIN);
+            q.addCategory(Intent.CATEGORY_LAUNCHER);
+            List<ResolveInfo> l = pm.queryIntentActivities(q, 0);
+            List<App> out = new ArrayList<App>();
+            for (ResolveInfo r : l) {
+                App a = new App();
+                a.label = r.loadLabel(pm).toString();
+                a.pkg = r.activityInfo.packageName;
+                a.n = norm(a.label);
+                a.np = norm(a.pkg);
+                if (a.n.length() > 1) out.add(a);
+            }
+            APPS = out;
+            loadedAt = System.currentTimeMillis();
+        } catch (Exception e) { }
+    }
+
+    static void ensure(Context c) {
+        if (APPS.isEmpty() || System.currentTimeMillis() - loadedAt > 600000) loadApps(c);
+    }
+
+    static int lev(String a, String b) {
+        int m = a.length(), n = b.length();
+        int[] p = new int[n + 1];
+        for (int j = 0; j <= n; j++) p[j] = j;
+        for (int i = 1; i <= m; i++) {
+            int[] q = new int[n + 1];
+            q[0] = i;
+            for (int j = 1; j <= n; j++) {
+                int cost = a.charAt(i - 1) == b.charAt(j - 1) ? 0 : 1;
+                q[j] = Math.min(Math.min(p[j] + 1, q[j - 1] + 1), p[j - 1] + cost);
+            }
+            p = q;
+        }
+        return p[n];
+    }
+
+    static App best(String name) {
+        String t = norm(name);
+        String al = ALIAS.get(t);
+        if (al != null) t = al;
+        if (t.length() < 2) return null;
+        App best = null;
+        double bs = 0;
+        for (App a : APPS) {
+            double sc = 0;
+            if (a.n.equals(t)) sc = 100;
+            else if (t.length() >= 3 && (a.n.contains(t) || (a.n.length() >= 4 && t.contains(a.n)))) sc = 85 - Math.abs(a.n.length() - t.length());
+            else if (t.length() >= 5 && a.np.contains(t)) sc = 78;
+            else if (t.length() >= 4) {
+                double sim = 1.0 - (double) lev(a.n, t) / Math.max(a.n.length(), t.length());
+                if (sim >= 0.72) sc = sim * 80;
+            }
+            if (sc > bs) {
+                bs = sc;
+                best = a;
+            }
+        }
+        return bs >= 58 ? best : null;
+    }
+
+    static App find(Context c, String name) {
+        ensure(c);
+        App a = best(name);
+        if (a == null) {
+            loadApps(c);
+            a = best(name);
+        }
+        return a;
+    }
+
+    static boolean start(Context c, Intent i) {
+        try {
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            c.startActivity(i);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    static boolean launch(Context c, String pkg) {
+        try {
+            Intent i = c.getPackageManager().getLaunchIntentForPackage(pkg);
+            return i != null && start(c, i);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    static boolean view(Context c, String url, String pkg) {
+        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        if (pkg != null) i.setPackage(pkg);
+        return start(c, i);
+    }
+
+    static String torch(Context c, boolean on) {
+        try {
+            CameraManager cm = (CameraManager) c.getSystemService(Context.CAMERA_SERVICE);
+            for (String id : cm.getCameraIdList()) {
+                Boolean f = cm.getCameraCharacteristics(id).get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+                if (f != null && f) {
+                    cm.setTorchMode(id, on);
+                    return "Flashlight " + (on ? "on." : "off.");
+                }
+            }
+        } catch (Exception e) { }
+        return "Could not control the flashlight.";
+    }
+
+    static void adjust(AudioManager am, int dir, int times) {
+        for (int i = 0; i < times; i++) {
+            am.adjustStreamVolume(AudioManager.STREAM_MUSIC, dir, i == times - 1 ? AudioManager.FLAG_SHOW_UI : 0);
+        }
+    }
+
+    static String sys(Context c, int action, String ok) {
+        if (NavoxAccess.inst == null) {
+            NavoxAccess.open(c, android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
+            return "Turn on NAVOX in Accessibility settings first.";
+        }
+        NavoxAccess.global(action);
+        return ok;
+    }
+
+    static String ytQuery(String t) {
+        Matcher m = Pattern.compile("^(?:open\\s+)?(?:the\\s+)?(?:youtube|you tube)\\s+(?:and\\s+)?(?:play|search|find)\\s+(?:for\\s+|the\\s+)?(.+)$").matcher(t);
+        if (m.find()) return m.group(1);
+        m = Pattern.compile("^play\\s+(.+?)\\s+(?:on|in)\\s+(?:youtube|you tube)$").matcher(t);
+        if (m.find()) return m.group(1);
+        return null;
+    }
+
+    static String clean(String q) {
+        return q.replaceAll("^(the|a|an)\\s+", "").trim();
+    }
+
+    static String[] searchParse(String t) {
+        String names = "youtube|you tube|instagram|insta|telegram|whatsapp|whats app|google maps|maps|spotify|amazon|flipkart|play store|playstore|twitter|reddit|facebook|google|chrome";
+        Matcher m = Pattern.compile("^(?:open\\s+)?(?:the\\s+)?(" + names + ")\\s+(?:and\\s+|lo\\s+|in\\s+)?(?:search|find|play)\\s+(?:for\\s+|the\\s+)?(.+)$").matcher(t);
+        if (m.find()) return new String[]{SAPP.get(m.group(1)), clean(m.group(2))};
+        m = Pattern.compile("^(?:search|find|play)\\s+(?:for\\s+)?(.+?)\\s+(?:on|in)\\s+(?:the\\s+)?(" + names + ")$").matcher(t);
+        if (m.find()) return new String[]{SAPP.get(m.group(2)), clean(m.group(1))};
+        m = Pattern.compile("^(?:open\\s+)?(" + names + ")\\s+lo\\s+(.+?)\\s+(?:search|vetuku|vedhuku|chudu)(?:\\s+chey\\w*)?$").matcher(t);
+        if (m.find()) return new String[]{SAPP.get(m.group(1)), clean(m.group(2))};
+        return null;
+    }
+
+    static String searchIn(Context c, String key, String q) {
+        String eq = Uri.encode(q);
+        String url = null;
+        String pkg = null;
+        String name = key;
+        if (key.equals("youtube")) {
+            url = "https://www.youtube.com/results?search_query=" + eq;
+            pkg = "com.google.android.youtube";
+            name = "YouTube";
+        } else if (key.equals("maps")) {
+            url = "geo:0,0?q=" + eq;
+            pkg = "com.google.android.apps.maps";
+            name = "Maps";
+        } else if (key.equals("spotify")) {
+            url = "spotify:search:" + eq;
+            pkg = "com.spotify.music";
+            name = "Spotify";
+        } else if (key.equals("playstore")) {
+            url = "market://search?q=" + eq + "&c=apps";
+            pkg = "com.android.vending";
+            name = "Play Store";
+        } else if (key.equals("amazon")) {
+            url = "https://www.amazon.in/s?k=" + eq;
+            pkg = "in.amazon.mShop.android.shopping";
+            name = "Amazon";
+        } else if (key.equals("flipkart")) {
+            url = "https://www.flipkart.com/search?q=" + eq;
+            pkg = "com.flipkart.android";
+            name = "Flipkart";
+        } else if (key.equals("twitter")) {
+            url = "https://x.com/search?q=" + eq;
+            pkg = "com.twitter.android";
+            name = "X";
+        } else if (key.equals("reddit")) {
+            url = "https://www.reddit.com/search/?q=" + eq;
+            pkg = "com.reddit.frontpage";
+            name = "Reddit";
+        } else if (key.equals("facebook")) {
+            url = "https://www.facebook.com/search/top?q=" + eq;
+            pkg = "com.facebook.katana";
+            name = "Facebook";
+        } else if (key.equals("chrome")) {
+            url = "https://www.google.com/search?q=" + eq;
+            name = "Google";
+        }
+        if (url != null) {
+            if (!view(c, url, pkg)) view(c, url, null);
+            return "Searching " + q + " on " + name + ".";
+        }
+        if (key.equals("instagram")) return NavoxAccess.searchApp(c, "com.instagram.android", q, new String[]{"search and explore"}, "Instagram");
+        if (key.equals("telegram")) return NavoxAccess.searchApp(c, "org.telegram.messenger", q, new String[]{"search"}, "Telegram");
+        if (key.equals("whatsapp")) return NavoxAccess.searchApp(c, "com.whatsapp", q, new String[]{"search"}, "WhatsApp");
+        return null;
+    }
+
+    static String web(Context c, String t) {
+        String url = null;
+        String label = null;
+        if (t.contains("apsrtc") && t.matches(".*\\b(live|track|tracker|tracking|location|running|where)\\b.*")) {
+            url = "https://www.redbus.in/live-tracking/apsrtc";
+            label = "APSRTC live tracking";
+        } else if (t.contains("irctc") && t.matches(".*\\b(website|site|book|booking|ticket|tickets|train)\\b.*")) {
+            url = "https://www.irctc.co.in/";
+            label = "IRCTC";
+        } else if (t.matches("^(?:search|find|open|go to|show|visit)\\s+.*\\b(website|site|portal|tracker|tracking|official|login)\\b.*")) {
+            String q = t.replaceAll("^(?:search|find|open|go to|show|visit)\\s+(?:for\\s+|the\\s+)?", "").trim();
+            url = "https://duckduckgo.com/?q=" + Uri.encode("!ducky " + q);
+            label = q;
+        }
+        if (url == null) return null;
+        view(c, url, null);
+        return "Opening " + label + ".";
+    }
+
+    public static String run(Context c, String raw) {
+        try {
+            return run2(c, raw);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    static String run2(Context c, String raw) {
+        String t = raw.toLowerCase().replaceAll("[,.!?]", " ").replaceAll("\\s+", " ").trim();
+        if (t.length() == 0) return null;
+        int words = t.split(" ").length;
+        boolean off = t.matches(".*\\b(off|disable|band|aapu|close)\\b.*");
+        boolean on = t.matches(".*\\b(on|enable)\\b.*");
+        int want = off ? 0 : (on ? 1 : (t.matches(".*\\b(toggle|switch)\\b.*") ? -1 : 2));
+        Matcher m;
+
+        if (t.matches("^(stop|cancel|stop it|stop agent|aagu|apu)$")) {
+            AgentRunner.cancel();
+            return "Stopped.";
+        }
+
+        if (words <= 6 && t.matches(".*(torch|flash ?light).*")) return torch(c, !off);
+
+        if (t.matches(".*screen ?shot.*") && words <= 6) {
+            if (NavoxAccess.inst == null) {
+                NavoxAccess.open(c, android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                return "Turn on NAVOX in Accessibility settings to take screenshots.";
+            }
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                public void run() {
+                    NavoxAccess.global(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT);
+                }
+            }, 600);
+            return "Taking screenshot.";
+        }
+
+        if (words <= 6 && !t.matches(".*\\b(how|what|why|password|speed|test)\\b.*")) {
+            String w = null;
+            if (t.matches(".*(wi-?fi|wi fi).*")) w = "wifi";
+            else if (t.matches(".*bluetooth.*")) w = "bluetooth";
+            else if (t.matches(".*(airplane|aeroplane|flight mode).*")) w = "airplane";
+            if (w != null) return NavoxAccess.toggle(c, w, want);
+        }
+
+        if (words <= 5 && t.matches(".*\\b(volume|louder|quieter|mute|unmute)\\b.*")) {
+            AudioManager am = (AudioManager) c.getSystemService(Context.AUDIO_SERVICE);
+            int max = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+            if (t.matches(".*\\b(max|full|maximum)\\b.*")) {
+                am.setStreamVolume(AudioManager.STREAM_MUSIC, max, AudioManager.FLAG_SHOW_UI);
+                return "Volume maximum.";
+            }
+            if (t.matches(".*\\b(mute|silent|zero)\\b.*")) {
+                am.setStreamVolume(AudioManager.STREAM_MUSIC, 0, AudioManager.FLAG_SHOW_UI);
+                return "Muted.";
+            }
+            if (t.matches(".*\\b(up|increase|raise|louder|more|high)\\b.*")) {
+                adjust(am, AudioManager.ADJUST_RAISE, 3);
+                return "Volume up.";
+            }
+            if (t.matches(".*\\b(down|decrease|lower|quieter|less|low)\\b.*")) {
+                adjust(am, AudioManager.ADJUST_LOWER, 3);
+                return "Volume down.";
+            }
+            am.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
+            return "Volume.";
+        }
+
+        if (t.matches("^(go )?home( screen)?$")) return sys(c, AccessibilityService.GLOBAL_ACTION_HOME, "Home.");
+        if (t.matches("^(go )?back$")) return sys(c, AccessibilityService.GLOBAL_ACTION_BACK, "Back.");
+        if (t.matches("^(show )?(recent apps?|recents)$")) return sys(c, AccessibilityService.GLOBAL_ACTION_RECENTS, "Recent apps.");
+        if (t.matches("^lock( the)?( screen| phone)?$")) return sys(c, AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN, "Locking.");
+        if (t.matches("^(open |show )?notifications?( panel| bar)?$")) return sys(c, AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS, "Notifications.");
+        if (t.matches("^(open |show )?quick settings$")) return sys(c, AccessibilityService.GLOBAL_ACTION_QUICK_SETTINGS, "Quick settings.");
+
+        m = Pattern.compile("(?:^|\\s)(?:call|dial)\\s*(\\+?\\d[\\d\\s-]{2,})").matcher(t);
+        if (m.find()) {
+            String num = m.group(1).replaceAll("[\\s-]", "");
+            return start(c, new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + Uri.encode(num)))) ? "Dialer opened for " + num + "." : null;
+        }
+
+        m = Pattern.compile("^(?:sms|text|message|msg)\\s+(\\+?\\d[\\d-]{5,})\\s*(.*)$").matcher(t);
+        if (m.find()) {
+            Intent i = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + Uri.encode(m.group(1).replace("-", ""))));
+            i.putExtra("sms_body", m.group(2));
+            return start(c, i) ? "Message ready. Tap send." : null;
+        }
+
+        Matcher d = Pattern.compile("(\\d+)\\s*(sec\\w*|min\\w*|nimish\\w*|hour\\w*|hr\\w*|gant\\w*)").matcher(t);
+        if ((t.contains("timer") || t.contains("remind")) && d.find()) {
+            int n = Integer.parseInt(d.group(1));
+            String u = d.group(2);
+            int sec = n * (u.startsWith("s") ? 1 : (u.startsWith("h") || u.startsWith("g")) ? 3600 : 60);
+            Intent i = new Intent(AlarmClock.ACTION_SET_TIMER);
+            i.putExtra(AlarmClock.EXTRA_LENGTH, sec);
+            i.putExtra(AlarmClock.EXTRA_MESSAGE, "NAVOX");
+            i.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+            return start(c, i) ? "Timer set for " + n + " " + u + "." : null;
+        }
+
+        if (t.matches(".*\\balarm\\b.*")) {
+            Matcher a = Pattern.compile("(\\d{1,2})(?::(\\d{2}))?\\s*(am|pm)?").matcher(t);
+            if (a.find()) {
+                int h = Integer.parseInt(a.group(1));
+                int mi = a.group(2) == null ? 0 : Integer.parseInt(a.group(2));
+                String p = a.group(3);
+                if ("pm".equals(p) && h < 12) h += 12;
+                if ("am".equals(p) && h == 12) h = 0;
+                if (h < 24 && mi < 60) {
+                    Intent i = new Intent(AlarmClock.ACTION_SET_ALARM);
+                    i.putExtra(AlarmClock.EXTRA_HOUR, h);
+                    i.putExtra(AlarmClock.EXTRA_MINUTES, mi);
+                    i.putExtra(AlarmClock.EXTRA_MESSAGE, "NAVOX");
+                    i.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+                    return start(c, i) ? "Alarm set for " + String.format("%02d:%02d", h, mi) + "." : null;
+                }
+            }
+        }
+
+        String[] sp = searchParse(t);
+        if (sp != null && sp[0] != null && sp[1].length() > 0) {
+            String sr = searchIn(c, sp[0], sp[1]);
+            if (sr != null) return sr;
+        }
+        String wr = web(c, t);
+        if (wr != null) return wr;
+
+        String yq = ytQuery(t);
+        if (yq != null) {
+            String url = "https://www.youtube.com/results?search_query=" + Uri.encode(yq);
+            if (!view(c, url, "com.google.android.youtube")) view(c, url, null);
+            return "Searching YouTube for " + yq + ".";
+        }
+
+        String name = null;
+        m = Pattern.compile("^(?:open|launch|start|run)\\s+(?:the\\s+)?(.+?)(?:\\s+app)?$").matcher(t);
+        if (m.find()) {
+            name = m.group(1);
+        } else {
+            m = Pattern.compile("^(.+?)\\s+open(?:\\s+chey\\w*)?$").matcher(t);
+            if (m.find()) name = m.group(1);
+        }
+        if (name != null && !name.matches(".*\\b(and|search|play|find)\\b.*")) {
+            App a = find(c, name);
+            if (a != null && launch(c, a.pkg)) return "Opening " + a.label + ".";
+        }
+        return null;
+    }
+}
+@@@FILE app/src/main/java/com/navox/agent/NavoxAccess.java
+package com.navox.agent;
+
+import android.accessibilityservice.AccessibilityService;
+import android.accessibilityservice.GestureDescription;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Path;
+import android.graphics.Rect;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.Settings;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
+import java.util.ArrayList;
+import java.util.List;
+
+public class NavoxAccess extends AccessibilityService {
+    static volatile NavoxAccess inst = null;
+    final Handler h = new Handler(Looper.getMainLooper());
+
+    @Override
+    protected void onServiceConnected() {
+        inst = this;
+    }
+
+    @Override
+    public void onAccessibilityEvent(AccessibilityEvent e) { }
+
+    @Override
+    public void onInterrupt() { }
+
+    @Override
+    public boolean onUnbind(Intent i) {
+        inst = null;
+        return super.onUnbind(i);
+    }
+
+    static boolean global(int a) {
+        NavoxAccess s = inst;
+        return s != null && s.performGlobalAction(a);
+    }
+
+    static boolean open(Context c, String action) {
+        try {
+            Intent i = new Intent(action);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            c.startActivity(i);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    static String toggle(Context c, String what, int want) {
+        String action;
+        String label;
+        if (what.equals("wifi")) {
+            action = "android.settings.panel.action.WIFI";
+            label = "Wi-Fi";
+        } else if (what.equals("bluetooth")) {
+            action = Settings.ACTION_BLUETOOTH_SETTINGS;
+            label = "Bluetooth";
+        } else {
+            action = Settings.ACTION_AIRPLANE_MODE_SETTINGS;
+            label = "Airplane mode";
+        }
+        boolean opened = open(c, action);
+        if (!opened && what.equals("wifi")) opened = open(c, Settings.ACTION_WIFI_SETTINGS);
+        if (!opened) return "Could not open " + label + " settings.";
+        if (want == 2) return "Opened " + label + ". Say on or off to switch it.";
+        NavoxAccess s = inst;
+        if (s == null) return "Opened " + label + ". Turn on NAVOX in Accessibility settings to switch it automatically.";
+        s.clickSwitch(want, 0);
+        return label + (want == 1 ? " on." : want == 0 ? " off." : " toggled.");
+    }
+
+    void clickSwitch(final int want, final int attempt) {
+        h.postDelayed(new Runnable() {
+            public void run() {
+                boolean done = false;
+                try {
+                    AccessibilityNodeInfo root = getRootInActiveWindow();
+                    if (root != null) {
+                        AccessibilityNodeInfo sw = findSwitch(root);
+                        if (sw != null) {
+                            boolean isOn = sw.isChecked();
+                            if (want == -1 || (want == 1) != isOn) clickNode(sw);
+                            done = true;
+                        }
+                    }
+                } catch (Exception e) { }
+                if (done) {
+                    h.postDelayed(new Runnable() {
+                        public void run() {
+                            performGlobalAction(GLOBAL_ACTION_BACK);
+                        }
+                    }, 900);
+                } else if (attempt < 8) {
+                    clickSwitch(want, attempt + 1);
+                }
+            }
+        }, attempt == 0 ? 900 : 450);
+    }
+
+    static String searchApp(Context c, String pkg, String query, String[] hints, String name) {
+        if (!CommandRunner.launch(c, pkg)) return null;
+        NavoxAccess s = inst;
+        if (s == null) return "Opened " + name + ". Turn on NAVOX in Accessibility settings so I can type the search for you.";
+        s.autoSearch(pkg, query, hints, 0, 0);
+        return "Searching " + query + " in " + name + ".";
+    }
+
+    void autoSearch(final String pkg, final String q, final String[] hints, final int phase, final int attempt) {
+        h.postDelayed(new Runnable() {
+            public void run() {
+                int np = phase;
+                try {
+                    AccessibilityNodeInfo root = getRootInActiveWindow();
+                    if (root != null && pkg.equals(String.valueOf(root.getPackageName()))) {
+                        if (phase == 0) {
+                            AccessibilityNodeInfo tab = findByHint(root, hints);
+                            if (tab != null) {
+                                clickNode(tab);
+                                np = 1;
+                            } else if (attempt >= 5) {
+                                np = 1;
+                            }
+                        } else {
+                            AccessibilityNodeInfo ed = findEditable(root);
+                            if (ed != null) {
+                                Bundle b = new Bundle();
+                                b.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, q);
+                                ed.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                ed.performAction(AccessibilityNodeInfo.ACTION_FOCUS);
+                                ed.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, b);
+                                np = 2;
+                            } else {
+                                AccessibilityNodeInfo sb = findByHint(root, new String[]{"search"});
+                                if (sb != null) clickNode(sb);
+                            }
+                        }
+                    }
+                } catch (Exception e) { }
+                if (np == 2) {
+                    h.postDelayed(new Runnable() {
+                        public void run() {
+                            try {
+                                AccessibilityNodeInfo r2 = getRootInActiveWindow();
+                                AccessibilityNodeInfo e2 = r2 == null ? null : findEditable(r2);
+                                if (e2 != null && Build.VERSION.SDK_INT >= 30) {
+                                    e2.performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_IME_ENTER.getId());
+                                }
+                            } catch (Exception ex) { }
+                        }
+                    }, 700);
+                } else if (attempt < 14) {
+                    autoSearch(pkg, q, hints, np, attempt + 1);
+                }
+            }
+        }, attempt == 0 ? 1600 : 800);
+    }
+
+    static AccessibilityNodeInfo findByHint(AccessibilityNodeInfo root, String[] hints) {
+        List<AccessibilityNodeInfo> q = new ArrayList<AccessibilityNodeInfo>();
+        q.add(root);
+        int i = 0;
+        while (i < q.size() && i < 600) {
+            AccessibilityNodeInfo n = q.get(i++);
+            if (n == null) continue;
+            CharSequence d = n.getContentDescription();
+            CharSequence t = n.getText();
+            String s = ((d == null ? "" : d.toString()) + " " + (t == null ? "" : t.toString())).toLowerCase();
+            if (s.length() < 60 && n.isVisibleToUser()) {
+                for (String hnt : hints) {
+                    if (s.contains(hnt)) return n;
+                }
+            }
+            for (int k = 0; k < n.getChildCount(); k++) {
+                AccessibilityNodeInfo ch = n.getChild(k);
+                if (ch != null) q.add(ch);
+            }
+        }
+        return null;
+    }
+
+    static AccessibilityNodeInfo findEditable(AccessibilityNodeInfo root) {
+        List<AccessibilityNodeInfo> q = new ArrayList<AccessibilityNodeInfo>();
+        q.add(root);
+        int i = 0;
+        while (i < q.size() && i < 600) {
+            AccessibilityNodeInfo n = q.get(i++);
+            if (n == null) continue;
+            if (n.isEditable() && n.isVisibleToUser()) return n;
+            for (int k = 0; k < n.getChildCount(); k++) {
+                AccessibilityNodeInfo ch = n.getChild(k);
+                if (ch != null) q.add(ch);
+            }
+        }
+        return null;
+    }
+
+    static boolean tap(AccessibilityNodeInfo n) {
+        AccessibilityNodeInfo p = n;
+        int d = 0;
+        while (p != null && d < 6) {
+            if (p.isClickable() && p.performAction(AccessibilityNodeInfo.ACTION_CLICK)) return true;
+            p = p.getParent();
+            d++;
+        }
+        Rect r = new Rect();
+        n.getBoundsInScreen(r);
+        return tapAt(r.centerX(), r.centerY());
+    }
+
+    static boolean tapAt(int x, int y) {
+        NavoxAccess s = inst;
+        if (s == null || Build.VERSION.SDK_INT < 24) return false;
+        Path p = new Path();
+        p.moveTo(x, y);
+        GestureDescription.Builder gb = new GestureDescription.Builder();
+        gb.addStroke(new GestureDescription.StrokeDescription(p, 0, 60));
+        return s.dispatchGesture(gb.build(), null, null);
+    }
+
+    static void imeEnter() {
+        NavoxAccess s = inst;
+        if (s == null) return;
+        AccessibilityNodeInfo r = s.getRootInActiveWindow();
+        if (r == null) return;
+        AccessibilityNodeInfo e = findEditable(r);
+        if (e != null && Build.VERSION.SDK_INT >= 30) {
+            e.performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_IME_ENTER.getId());
+        }
+    }
+
+    static AccessibilityNodeInfo findSwitch(AccessibilityNodeInfo root) {
+        List<AccessibilityNodeInfo> q = new ArrayList<AccessibilityNodeInfo>();
+        q.add(root);
+        int i = 0;
+        while (i < q.size() && i < 500) {
+            AccessibilityNodeInfo n = q.get(i++);
+            if (n == null) continue;
+            if (n.isCheckable() && n.isVisibleToUser()) return n;
+            for (int k = 0; k < n.getChildCount(); k++) {
+                AccessibilityNodeInfo ch = n.getChild(k);
+                if (ch != null) q.add(ch);
+            }
+        }
+        return null;
+    }
+
+    static void clickNode(AccessibilityNodeInfo n) {
+        AccessibilityNodeInfo p = n;
+        int d = 0;
+        while (p != null && d < 6) {
+            if (p.isClickable()) {
+                p.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                return;
+            }
+            p = p.getParent();
+            d++;
+        }
+    }
+}
+@@@FILE app/src/main/java/com/navox/agent/WakeEngine.java
+package com.navox.agent;
+
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import java.io.IOException;
+import java.util.regex.Pattern;
+import org.json.JSONObject;
+import org.vosk.Model;
+import org.vosk.Recognizer;
+import org.vosk.android.RecognitionListener;
+import org.vosk.android.SpeechService;
+import org.vosk.android.StorageService;
+
+public class WakeEngine implements RecognitionListener {
+    public interface Callback {
+        void onReady();
+
+        void onWake();
+
+        void onFail();
+    }
+
+    static final String GRAMMAR = "[\"hey nav\", \"hey nova\", \"hey navy\", \"hey knave\", \"hey neve\", \"hi nav\", \"ok nav\", \"okay nav\", \"[unk]\"]";
+    static final Pattern WAKE = Pattern.compile("\\b(hey|hi|hello|ok|okay)\\s+(nav|nova|navy|knave|neve)\\b");
+
+    final Context ctx;
+    final Callback cb;
+    final Handler h = new Handler(Looper.getMainLooper());
+    Model model;
+    Recognizer rec;
+    SpeechService ss;
+    boolean dead = false;
+    boolean fired = false;
+    boolean ready = false;
+    int tries = 0;
+
+    final Runnable resumeR = new Runnable() {
+        public void run() {
+            resume();
+        }
+    };
+
+    public WakeEngine(Context c, Callback cb) {
+        this.ctx = c;
+        this.cb = cb;
+    }
+
+    public void init() {
+        StorageService.unpack(ctx, "model", "model",
+                new StorageService.Callback<Model>() {
+                    public void onComplete(Model m) {
+                        if (dead) return;
+                        model = m;
+                        try {
+                            rec = new Recognizer(model, 16000.0f, GRAMMAR);
+                            resume();
+                        } catch (Exception e) {
+                            cb.onFail();
+                        }
+                    }
+                },
+                new StorageService.Callback<IOException>() {
+                    public void onComplete(IOException e) {
+                        cb.onFail();
+                    }
+                });
+    }
+
+    void stopService() {
+        if (ss != null) {
+            try {
+                ss.stop();
+            } catch (Exception e) { }
+            try {
+                ss.shutdown();
+            } catch (Exception e) { }
+            ss = null;
+        }
+    }
+
+    public void resume() {
+        if (dead || rec == null) return;
+        fired = false;
+        try {
+            stopService();
+            rec.reset();
+            ss = new SpeechService(rec, 16000.0f);
+            ss.startListening(this);
+            tries = 0;
+            if (!ready) {
+                ready = true;
+                cb.onReady();
+            }
+        } catch (Exception e) {
+            tries++;
+            if (tries < 6) h.postDelayed(resumeR, 1500);
+            else cb.onFail();
+        }
+    }
+
+    public void pause() {
+        h.removeCallbacks(resumeR);
+        stopService();
+    }
+
+    public void destroy() {
+        dead = true;
+        pause();
+        try {
+            if (rec != null) rec.close();
+        } catch (Exception e) { }
+        try {
+            if (model != null) model.close();
+        } catch (Exception e) { }
+    }
+
+    void check(String json) {
+        if (fired || dead) return;
+        try {
+            JSONObject o = new JSONObject(json);
+            String t = o.optString("partial", o.optString("text", ""));
+            if (WAKE.matcher(t).find()) {
+                fired = true;
+                cb.onWake();
+            }
+        } catch (Exception e) { }
+    }
+
+    @Override
+    public void onPartialResult(String s) {
+        check(s);
+    }
+
+    @Override
+    public void onResult(String s) {
+        check(s);
+    }
+
+    @Override
+    public void onFinalResult(String s) { }
+
+    @Override
+    public void onError(Exception e) {
+        if (!dead) h.postDelayed(resumeR, 1500);
+    }
+
+    @Override
+    public void onTimeout() { }
+}
+@@@FILE app/src/main/java/com/navox/agent/AgentRunner.java
+package com.navox.agent;
+
+import android.accessibilityservice.AccessibilityService;
+import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.Settings;
+import android.view.accessibility.AccessibilityNodeInfo;
+import android.widget.Toast;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class AgentRunner {
+    public interface Listener {
+        void onSay(String s);
+    }
+
+    static volatile Listener listener = null;
+    static volatile boolean cancel = false;
+    static volatile boolean running = false;
+    static final Handler main = new Handler(Looper.getMainLooper());
+    static final Pattern RISKY = Pattern.compile("^(send|pay|pay now|buy|buy now|place order|order now|delete|remove|post|share|confirm|checkout|transfer|proceed to pay)\\b", Pattern.CASE_INSENSITIVE);
+
+    static final String SYS = "You are NAVOX AI, a phone agent built by Naveen Kumar. You operate an Android phone for the user through its accessibility tree. "
+            + "Each turn you get GOAL, HISTORY and SCREEN (numbered elements). Reply with ONE JSON object only, no other text. Allowed actions: "
+            + "{\"action\":\"open_app\",\"app\":\"app name\"} "
+            + "{\"action\":\"tap\",\"id\":N} "
+            + "{\"action\":\"type\",\"id\":N,\"text\":\"...\"} (id must be an input element) "
+            + "{\"action\":\"enter\"} (press the search or enter key) "
+            + "{\"action\":\"scroll\",\"dir\":\"down\" or \"up\"} "
+            + "{\"action\":\"back\"} {\"action\":\"home\"} "
+            + "{\"action\":\"open_url\",\"url\":\"https://...\"} "
+            + "{\"action\":\"wait\"} "
+            + "{\"action\":\"done\",\"say\":\"short message to the user\"}. "
+            + "Add a short \"why\" to every action. Take the shortest path to the goal. "
+            + "If the goal is only a question, reply done with the answer in say. "
+            + "Never tap Send, Pay, Buy, Order, Delete, Post, Share or Confirm: prepare everything, then reply done and tell the user to press it. "
+            + "Never type into password fields. If you are stuck after a few tries, reply done and explain. Keep say under 25 words. "
+            + "The user may write English, Telugu or Tanglish; reply in the same language.";
+
+    static class Screen {
+        String pkg = "";
+        StringBuilder text = new StringBuilder();
+        List<AccessibilityNodeInfo> nodes = new ArrayList<AccessibilityNodeInfo>();
+        List<String> labels = new ArrayList<String>();
+    }
+
+    public static void cancel() {
+        cancel = true;
+    }
+
+    static void emit(final Context c, final String msg, final boolean fin) {
+        main.post(new Runnable() {
+            public void run() {
+                try {
+                    Toast.makeText(c.getApplicationContext(), msg, fin ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
+                } catch (Exception e) { }
+                Listener l = listener;
+                if (fin && l == null) Voice.speak(c, msg, "en-IN");
+                if (fin && l != null) {
+                    try {
+                        l.onSay(msg);
+                    } catch (Exception e) { }
+                }
+            }
+        });
+    }
+
+    static boolean canRun(Context c, String cmd) {
+        String proxy = c.getSharedPreferences("navox", 0).getString("proxy", "");
+        if (proxy.length() == 0 || NavoxAccess.inst == null) return false;
+        String t = cmd.toLowerCase().trim();
+        if (t.endsWith("?")) return false;
+        return !t.matches("^(what|who|whom|whose|why|how|when|where|which|explain|tell me|define|is|are|can|do|does|meaning|translate)\\b.*");
+    }
+
+    public static String start(final Context c, final String goal) {
+        if (running) return "I am already working on a task. Say stop first.";
+        final String proxy = c.getSharedPreferences("navox", 0).getString("proxy", "");
+        final String token = c.getSharedPreferences("navox", 0).getString("ptoken", "");
+        if (proxy.length() == 0) return "AI is not set up in the app.";
+        if (NavoxAccess.inst == null) {
+            NavoxAccess.open(c, Settings.ACTION_ACCESSIBILITY_SETTINGS);
+            return "Turn on NAVOX in Accessibility settings so I can operate the phone.";
+        }
+        running = true;
+        cancel = false;
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    loop(c, goal, proxy, token);
+                } catch (Exception e) {
+                    String m = String.valueOf(e.getMessage());
+                    emit(c, m.toLowerCase().contains("quota") ? "Gemini free limit reached for now. Try later." : "Agent stopped: " + m, true);
+                } finally {
+                    running = false;
+                }
+            }
+        }).start();
+        return "Working on it: " + goal;
+    }
+
+    static void loop(Context c, String goal, String proxy, String token) throws Exception {
+        StringBuilder hist = new StringBuilder();
+        String lastSig = "";
+        int rep = 0;
+        for (int step = 1; step <= 14; step++) {
+            if (cancel) {
+                emit(c, "Stopped.", true);
+                return;
+            }
+            Screen s = dump();
+            String user = "GOAL: " + goal + "\nHISTORY:\n" + (hist.length() == 0 ? "(none)\n" : hist.toString())
+                    + "SCREEN (app: " + s.pkg + "):\n" + s.text;
+            JSONObject a = parse(ask(proxy, token, user));
+            String act = a.optString("action", "");
+            if (act.equals("done")) {
+                emit(c, a.optString("say", "Done."), true);
+                return;
+            }
+            String sig = a.toString();
+            rep = sig.equals(lastSig) ? rep + 1 : 0;
+            lastSig = sig;
+            if (rep >= 2) {
+                emit(c, "I am stuck on this screen. Please continue yourself.", true);
+                return;
+            }
+            emit(c, step + ". " + a.optString("why", act), false);
+            String r = doAction(c, a, s);
+            if (r.startsWith("STOP:")) {
+                emit(c, r.substring(5), true);
+                return;
+            }
+            hist.append(step).append(". ").append(act).append(" -> ").append(r).append("\n");
+            Thread.sleep(1400);
+        }
+        emit(c, "I stopped after 14 steps. Please continue yourself.", true);
+    }
+
+    static String doAction(Context c, JSONObject a, Screen s) {
+        String act = a.optString("action", "");
+        if (act.equals("open_app")) {
+            String nm = a.optString("app", "");
+            CommandRunner.App ap = CommandRunner.find(c, nm);
+            if (ap != null && CommandRunner.launch(c, ap.pkg)) return "opened " + ap.label;
+            return "could not open " + nm;
+        }
+        if (act.equals("open_url")) {
+            CommandRunner.view(c, a.optString("url", ""), null);
+            return "opened url";
+        }
+        if (act.equals("back")) {
+            NavoxAccess.global(AccessibilityService.GLOBAL_ACTION_BACK);
+            return "went back";
+        }
+        if (act.equals("home")) {
+            NavoxAccess.global(AccessibilityService.GLOBAL_ACTION_HOME);
+            return "went home";
+        }
+        if (act.equals("wait")) return "waited";
+        if (act.equals("enter")) {
+            NavoxAccess.imeEnter();
+            return "pressed enter";
+        }
+        if (act.equals("scroll")) {
+            boolean down = !"up".equals(a.optString("dir", "down"));
+            for (AccessibilityNodeInfo n : s.nodes) {
+                if (n.isScrollable()) {
+                    n.performAction(down ? AccessibilityNodeInfo.ACTION_SCROLL_FORWARD : AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD);
+                    return "scrolled " + (down ? "down" : "up");
+                }
+            }
+            return "nothing to scroll";
+        }
+        int id = a.optInt("id", -1);
+        if (id < 0 || id >= s.nodes.size()) return "invalid element id";
+        AccessibilityNodeInfo n = s.nodes.get(id);
+        String label = s.labels.get(id);
+        if (act.equals("tap")) {
+            if (RISKY.matcher(label.trim()).find()) {
+                return "STOP:I prepared everything. Please tap \"" + label + "\" yourself.";
+            }
+            NavoxAccess.tap(n);
+            return "tapped " + label;
+        }
+        if (act.equals("type")) {
+            if (n.isPassword()) return "STOP:I will not type into password fields.";
+            Bundle b = new Bundle();
+            b.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, a.optString("text", ""));
+            n.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+            n.performAction(AccessibilityNodeInfo.ACTION_FOCUS);
+            n.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, b);
+            return "typed text";
+        }
+        return "unknown action";
+    }
+
+    static String trim(String s, int n) {
+        String t = s.replace('\n', ' ').trim();
+        return t.length() > n ? t.substring(0, n) : t;
+    }
+
+    static Screen dump() {
+        Screen s = new Screen();
+        NavoxAccess svc = NavoxAccess.inst;
+        AccessibilityNodeInfo root = svc == null ? null : svc.getRootInActiveWindow();
+        if (root == null) return s;
+        s.pkg = String.valueOf(root.getPackageName());
+        List<AccessibilityNodeInfo> q = new ArrayList<AccessibilityNodeInfo>();
+        q.add(root);
+        int i = 0;
+        while (i < q.size() && i < 800 && s.nodes.size() < 90) {
+            AccessibilityNodeInfo n = q.get(i++);
+            if (n == null) continue;
+            for (int k = 0; k < n.getChildCount(); k++) {
+                AccessibilityNodeInfo ch = n.getChild(k);
+                if (ch != null) q.add(ch);
+            }
+            if (!n.isVisibleToUser()) continue;
+            CharSequence tx = n.getText();
+            CharSequence ds = n.getContentDescription();
+            String label = (tx != null && tx.length() > 0) ? tx.toString() : (ds != null ? ds.toString() : "");
+            boolean act = n.isClickable() || n.isEditable() || n.isScrollable() || n.isCheckable();
+            if (label.length() == 0 && !act) continue;
+            if (n.isPassword()) label = "(password field)";
+            String kind = n.isEditable() ? "input" : n.isScrollable() ? "scroll" : n.isClickable() ? "button" : "text";
+            if (kind.equals("text") && label.length() == 0) continue;
+            s.text.append("[").append(s.nodes.size()).append("] ").append(kind).append(": ").append(trim(label, 60));
+            if (n.isChecked()) s.text.append(" (on)");
+            s.text.append("\n");
+            s.nodes.add(n);
+            s.labels.add(label);
+        }
+        return s;
+    }
+
+    static JSONObject parse(String s) throws Exception {
+        int a = s.indexOf('{');
+        int b = s.lastIndexOf('}');
+        if (a < 0 || b <= a) throw new Exception("unclear reply from AI");
+        return new JSONObject(s.substring(a, b + 1));
+    }
+
+    static String ask(String proxy, String token, String user) throws Exception {
+        JSONObject body = new JSONObject();
+        body.put("system", SYS);
+        body.put("max_tokens", 400);
+        JSONArray msgs = new JSONArray();
+        JSONObject m = new JSONObject();
+        m.put("role", "user");
+        m.put("content", user);
+        msgs.put(m);
+        body.put("messages", msgs);
+        HttpURLConnection con = (HttpURLConnection) new URL(proxy).openConnection();
+        con.setRequestMethod("POST");
+        con.setConnectTimeout(15000);
+        con.setReadTimeout(45000);
+        con.setRequestProperty("content-type", "application/json");
+        con.setRequestProperty("x-app-token", token);
+        con.setDoOutput(true);
+        OutputStream os = con.getOutputStream();
+        os.write(body.toString().getBytes("UTF-8"));
+        os.close();
+        int code = con.getResponseCode();
+        InputStream is = code >= 400 ? con.getErrorStream() : con.getInputStream();
+        ByteArrayOutputStream bo = new ByteArrayOutputStream();
+        byte[] buf = new byte[4096];
+        int n;
+        while (is != null && (n = is.read(buf)) > 0) bo.write(buf, 0, n);
+        JSONObject r = new JSONObject(bo.toString("UTF-8"));
+        if (code >= 400) {
+            JSONObject er = r.optJSONObject("error");
+            throw new Exception(er != null ? er.optString("message", "HTTP " + code) : "HTTP " + code);
+        }
+        return r.getJSONArray("content").getJSONObject(0).optString("text", "");
+    }
+}
+@@@FILE app/src/main/java/com/navox/agent/Voice.java
+package com.navox.agent;
+
+import android.content.Context;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
+import android.speech.tts.TextToSpeech;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.MessageDigest;
+import java.util.Locale;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
+import org.json.JSONObject;
+
+public class Voice {
+    static MediaPlayer player;
+    static TextToSpeech tts;
+    static boolean ttsReady = false;
+    static volatile int gen = 0;
+    static String lastErr = "";
+    static boolean warned = false;
+    static final Object lock = new Object();
+
+    public static void speak(final Context ctx, final String text, final String lang) {
+        if (text == null || text.trim().length() == 0) return;
+        final Context app = ctx.getApplicationContext();
+        final String t = text.trim();
+        final int my = ++gen;
+        new Thread(new Runnable() {
+            public void run() {
+                final File[] out = new File[1];
+                Thread ft = new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            out[0] = fetch(app, t);
+                        } catch (Throwable e) {
+                            lastErr = String.valueOf(e.getMessage());
+                        }
+                    }
+                });
+                ft.start();
+                try {
+                    ft.join(1500);
+                } catch (Exception e) { }
+                File f = out[0];
+                if (f != null && my == gen) {
+                    try {
+                        play(app, f);
+                        return;
+                    } catch (Throwable e) {
+                        lastErr = String.valueOf(e.getMessage());
+                    }
+                }
+                if (my == gen) fallback(app, t, lang, !ft.isAlive());
+            }
+        }).start();
+    }
+
+    public static void stop() {
+        gen++;
+        try {
+            synchronized (lock) {
+                if (player != null) {
+                    player.release();
+                    player = null;
+                }
+            }
+            if (tts != null) tts.stop();
+        } catch (Throwable e) {
+        }
+    }
+
+    static String md5(String s) throws Exception {
+        MessageDigest m = MessageDigest.getInstance("MD5");
+        byte[] d = m.digest(s.getBytes("UTF-8"));
+        StringBuilder b = new StringBuilder();
+        for (byte x : d) b.append(String.format("%02x", x));
+        return b.toString();
+    }
+
+    static File fetch(Context ctx, String text) throws Exception {
+        File dir = new File(ctx.getCacheDir(), "tts");
+        dir.mkdirs();
+        File f = new File(dir, md5(text) + ".wav");
+        if (f.exists() && f.length() > 1000) return f;
+        android.content.SharedPreferences sp = ctx.getSharedPreferences("navox", 0);
+        String proxy = sp.getString("proxy", "");
+        String token = sp.getString("ptoken", "");
+        if (proxy.length() == 0) {
+            lastErr = "no proxy";
+            return null;
+        }
+        JSONObject body = new JSONObject();
+        body.put("text", text);
+        body.put("voice", sp.getString("voice", "Kore"));
+        HttpURLConnection con = (HttpURLConnection) new URL(proxy.replaceAll("/+$", "") + "/tts").openConnection();
+        con.setRequestMethod("POST");
+        con.setConnectTimeout(10000);
+        con.setReadTimeout(25000);
+        con.setRequestProperty("content-type", "application/json");
+        con.setRequestProperty("x-app-token", token);
+        con.setDoOutput(true);
+        OutputStream os = con.getOutputStream();
+        os.write(body.toString().getBytes("UTF-8"));
+        os.close();
+        int rc = con.getResponseCode();
+        if (rc != 200) {
+            lastErr = "server " + rc;
+            return null;
+        }
+        InputStream is = con.getInputStream();
+        ByteArrayOutputStream bo = new ByteArrayOutputStream();
+        byte[] buf = new byte[8192];
+        int n;
+        while ((n = is.read(buf)) > 0) bo.write(buf, 0, n);
+        is.close();
+        if (bo.size() < 1000) return null;
+        File tmp = new File(dir, f.getName() + ".tmp");
+        FileOutputStream fo = new FileOutputStream(tmp);
+        fo.write(bo.toByteArray());
+        fo.close();
+        tmp.renameTo(f);
+        return f;
+    }
+
+    static void play(Context ctx, File f) throws Exception {
+        synchronized (lock) {
+            if (player != null) {
+                try { player.release(); } catch (Throwable e) {}
+                player = null;
+            }
+            MediaPlayer mp = new MediaPlayer();
+            mp.setAudioAttributes(new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ASSISTANT)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build());
+            mp.setDataSource(f.getAbsolutePath());
+            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer m) {
+                    try { m.release(); } catch (Throwable e) {}
+                }
+            });
+            mp.prepare();
+            mp.start();
+            player = mp;
+        }
+    }
+
+    static void fallback(final Context ctx, final String text, final String lang, boolean failed) {
+        if (failed && !warned) {
+            warned = true;
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                public void run() {
+                    Toast.makeText(ctx, "NAVOX voice: using phone voice (" + lastErr + ")", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        final Locale loc = "te-IN".equals(lang) ? new Locale("te", "IN") : new Locale("en", "IN");
+        if (tts == null) {
+            tts = new TextToSpeech(ctx, new TextToSpeech.OnInitListener() {
+                public void onInit(int st) {
+                    ttsReady = st == TextToSpeech.SUCCESS;
+                    if (ttsReady) say(text, loc);
+                }
+            });
+        } else if (ttsReady) say(text, loc);
+    }
+
+    static void say(String text, Locale loc) {
+        try {
+            tts.setLanguage(loc);
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "navox");
+        } catch (Throwable e) {
+        }
+    }
+}
