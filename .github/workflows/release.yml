@@ -16,9 +16,11 @@ jobs:
           name: NAVOX-APK
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ github.token }}
-      - name: Create release with direct APK link
+      - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
+          N: ${{ github.event.workflow_run.run_number }}
         run: |
+          cp app-debug.apk "NAVOX-build-$N.apk"
           gh release delete latest --yes --cleanup-tag --repo "$GITHUB_REPOSITORY" || true
-          gh release create latest app-debug.apk --repo "$GITHUB_REPOSITORY" --target "${{ github.event.workflow_run.head_sha }}" --title "NAVOX APK (latest)" --notes "Download app-debug.apk and install it."
+          gh release create latest "NAVOX-build-$N.apk" app-debug.apk --repo "$GITHUB_REPOSITORY" --target "${{ github.event.workflow_run.head_sha }}" --title "NAVOX build $N" --notes "Download NAVOX-build-$N.apk and install it."
